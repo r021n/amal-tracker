@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import dayjs from "dayjs";
 
 interface UserState {
   name: string;
@@ -8,6 +9,8 @@ interface UserState {
   targetSedekah: number;
   targetQuran: number;
   isAuthenticated: boolean;
+  streak: number;
+  lastStreakDate: string;
   login: (pin: string) => boolean;
   logout: () => void;
   updateProfile: (
@@ -18,6 +21,7 @@ interface UserState {
       >
     >,
   ) => void;
+  tryIncrementStreak: () => void;
 }
 
 export const useUserStore = create<UserState>()(
@@ -29,6 +33,8 @@ export const useUserStore = create<UserState>()(
       targetSedekah: 50000,
       targetQuran: 2,
       isAuthenticated: false,
+      streak: 0,
+      lastStreakDate: "",
       login: (pin) => {
         const ok = get().pin !== "" && get().pin === pin;
         if (ok) set({ isAuthenticated: true });
@@ -36,6 +42,14 @@ export const useUserStore = create<UserState>()(
       },
       logout: () => set({ isAuthenticated: false }),
       updateProfile: (data) => set({ ...data }),
+      tryIncrementStreak: () => {
+        const today = dayjs().format("YYYY-MM-DD");
+        const { lastStreakDate, streak } = get();
+        if (lastStreakDate === today) return;
+        const yesterday = dayjs().subtract(1, "day").format("YYYY-MM-DD");
+        const newStreak = lastStreakDate === yesterday ? streak + 1 : 1;
+        set({ streak: newStreak, lastStreakDate: today });
+      },
     }),
     { name: "amal-user" },
   ),

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import dayjs from "dayjs";
+import dayjs from "../lib/dayjs";
 
 interface UserState {
   name: string;

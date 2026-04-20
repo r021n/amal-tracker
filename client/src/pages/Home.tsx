@@ -1,6 +1,7 @@
 import { useUserStore } from "../store/useUserStore";
 import { useTaskStore } from "../store/useTaskStore";
 import { useShallow } from "zustand/react/shallow";
+import Calendar from "../components/Calendar";
 
 export default function Home() {
   const name = useUserStore((s) => s.name);
@@ -57,7 +58,6 @@ export default function Home() {
             />
           </div>
         </div>
-
         <div className="p-3 bg-white rounded shadow">
           <div className="flex justify-between text-sm">
             <span>Quran hari ini</span>
@@ -76,11 +76,7 @@ export default function Home() {
         </div>
       </div>
       <div className="p-3 bg-white rounded shadow">
-        <div className="flex gap-4 mb-2">
-          <button className="font-medium">Hijriah</button>
-          <button className="text-gray-400">Masehi</button>
-        </div>
-        <div className="text-center text-red-500">Kalender view only</div>
+        <Calendar />
       </div>
     </div>
   );

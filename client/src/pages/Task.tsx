@@ -8,7 +8,7 @@ type SholatStatus = "none" | "done" | "halangan";
 function CircleStatus({ checked }: { checked: boolean }) {
   return (
     <span
-      className={`grid h-8 w-8 place-items-center rounded-full border text-sm font-semibold ${
+      className={`grid h-8 w-8 place-items-center rounded-full border-2 text-sm font-semibold ${
         checked
           ? "bg-black text-white border-black"
           : "bg-white text-black border-black"
@@ -22,7 +22,7 @@ function CircleStatus({ checked }: { checked: boolean }) {
 function SholatStatusBadge({ status }: { status: SholatStatus }) {
   if (status === "done") {
     return (
-      <span className="grid h-8 w-8 place-items-center rounded-full border border-black bg-black text-sm font-semibold text-white">
+      <span className="grid h-8 w-8 place-items-center rounded-full border-2 border-black bg-black text-sm font-semibold text-white">
         ✓
       </span>
     );
@@ -30,14 +30,14 @@ function SholatStatusBadge({ status }: { status: SholatStatus }) {
 
   if (status === "halangan") {
     return (
-      <span className="grid h-8 w-8 place-items-center rounded-full border border-amber-500 bg-amber-50 text-xs font-semibold text-amber-700">
+      <span className="grid h-8 w-8 place-items-center rounded-full border-2 border-amber-500 bg-amber-50 text-xs font-semibold text-amber-700">
         H
       </span>
     );
   }
 
   return (
-    <span className="grid h-8 w-8 place-items-center rounded-full border border-black bg-white text-sm font-semibold text-black" />
+    <span className="grid h-8 w-8 place-items-center rounded-full border-2 border-black bg-white text-sm font-semibold text-black" />
   );
 }
 
@@ -94,10 +94,10 @@ export default function Task() {
 
   return (
     <div className="p-4 max-w-md mx-auto pb-24">
-      <div className="rounded-[28px] border border-black bg-white">
+      <div className="rounded-[28px] border-2 border-black bg-white">
         <div className="relative px-5 pt-7 pb-5 text-center">
-          <h1 className="text-4xl font-black tracking-tight">
-            IBADAH TODO LIST
+          <h1 className="text-3xl font-black tracking-tight">
+            IBADAH HARI INI
           </h1>
           <p className="mt-2 text-lg font-semibold text-gray-700">
             {hijriDate}
@@ -105,7 +105,7 @@ export default function Task() {
           <p className="text-sm text-gray-500">{gregorianDate}</p>
         </div>
 
-        <div className="h-2 border-y border-black bg-gray-200">
+        <div className="h-2 border-y-2 border-black bg-gray-200">
           <div
             className="h-full bg-red-500"
             style={{ width: `${progressPercent}%` }}
@@ -124,7 +124,7 @@ export default function Task() {
               </div>
             </button>
 
-            <div className="mt-3 rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-3">
+            <div className="mt-3 rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 p-3">
               <div className="space-y-1">
                 {sholat.map((s) => (
                   <button
@@ -183,7 +183,7 @@ export default function Task() {
               type="number"
               value={today.quran.pages}
               onChange={(e) => setQuranPages(Number(e.target.value))}
-              className="w-full rounded-xl border border-black/70 px-3 py-2"
+              className="w-full rounded-xl border-2 border-black/70 px-3 py-2"
               placeholder="Jumlah halaman"
             />
           </section>
@@ -201,7 +201,7 @@ export default function Task() {
               type="number"
               value={today.sedekah.amount}
               onChange={(e) => setSedekahAmount(Number(e.target.value))}
-              className="w-full rounded-xl border border-black/70 px-3 py-2"
+              className="w-full rounded-xl border-2 border-black/70 px-3 py-2"
               placeholder="Nominal"
             />
           </section>
@@ -212,7 +212,7 @@ export default function Task() {
               <button
                 key={c.id}
                 onClick={() => toggleCustom(c.id)}
-                className="w-full flex items-center justify-between rounded-xl border border-gray-200 px-3 py-2"
+                className="w-full flex items-center justify-between rounded-xl border-2 border-gray-200 px-3 py-2"
               >
                 <span className="text-lg">{c.name}</span>
                 <CircleStatus checked={c.done} />
@@ -222,7 +222,7 @@ export default function Task() {
               <input
                 value={customName}
                 onChange={(e) => setCustomName(e.target.value)}
-                className="flex-1 rounded-xl border border-black/70 px-3 py-2"
+                className="flex-1 rounded-xl border-2 border-black/70 px-3 py-2"
                 placeholder="Nama kebaikan"
               />
               <button
@@ -232,7 +232,7 @@ export default function Task() {
                     setCustomName("");
                   }
                 }}
-                className="h-11 w-11 rounded-xl border border-black bg-black text-white text-xl"
+                className="h-11 w-11 rounded-xl border-2 border-black bg-black text-white text-xl"
                 aria-label="Tambah custom kebaikan"
               >
                 +

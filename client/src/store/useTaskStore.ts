@@ -20,13 +20,17 @@ interface TaskState {
   days: Record<string, TaskDay>;
   getToday: () => TaskDay;
   toggleSholat: (key: SholatKey) => void;
+  setSholatStatus: (key: SholatKey, status: SholatStatus) => void;
+  setAllSholat: (status: SholatStatus) => void;
   toggleDzikir: (type: "pagi" | "petang") => void;
+  setAllDzikir: (done: boolean) => void;
   setQuranPages: (pages: number) => void;
   toggleQuran: () => void;
   setSedekahAmount: (amount: number) => void;
   toggleSedekah: () => void;
   addCustom: (name: string) => void;
   toggleCustom: (id: string) => void;
+  removeCustom: (id: string) => void;
   getWeeklySedekah: () => number;
 }
 
@@ -64,6 +68,23 @@ export const useTaskStore = create<TaskState>()(
         set({ days: { ...get().days, [today]: updated } });
         if (next === "done") useUserStore.getState().tryIncrementStreak();
       },
+      setSholatStatus: (key, status) => {
+        const today = dayjs().format("YYYY-MM-DD");
+        const day = get().getToday();
+        const updated = { ...day, sholat: { ...day.sholat, [key]: status } };
+        set({ days: { ...get().days, [today]: updated } });
+        if (status === "done") useUserStore.getState().tryIncrementStreak();
+      },
+      setAllSholat: (status) => {
+        const today = dayjs().format("YYYY-MM-DD");
+        const day = get().getToday();
+        const updated = {
+          ...day,
+          sholat: { s: status, d: status, a: status, m: status, i: status },
+        };
+        set({ days: { ...get().days, [today]: updated } });
+        if (status === "done") useUserStore.getState().tryIncrementStreak();
+      },
       toggleDzikir: (type) => {
         const today = dayjs().format("YYYY-MM-DD");
         const day = get().getToday();
@@ -71,6 +92,13 @@ export const useTaskStore = create<TaskState>()(
         const updated = { ...day, [key]: !day[key] };
         set({ days: { ...get().days, [today]: updated } });
         if (updated[key]) useUserStore.getState().tryIncrementStreak();
+      },
+      setAllDzikir: (done) => {
+        const today = dayjs().format("YYYY-MM-DD");
+        const day = get().getToday();
+        const updated = { ...day, dzikirPagi: done, dzikirPetang: done };
+        set({ days: { ...get().days, [today]: updated } });
+        if (done) useUserStore.getState().tryIncrementStreak();
       },
       setQuranPages: (pages) => {
         const today = dayjs().format("YYYY-MM-DD");
@@ -128,6 +156,15 @@ export const useTaskStore = create<TaskState>()(
         set({ days: { ...get().days, [today]: updated } });
         if (updated.custom.some((c) => c.done))
           useUserStore.getState().tryIncrementStreak();
+      },
+      removeCustom: (id) => {
+        const today = dayjs().format("YYYY-MM-DD");
+        const day = get().getToday();
+        const updated = {
+          ...day,
+          custom: day.custom.filter((c) => c.id !== id),
+        };
+        set({ days: { ...get().days, [today]: updated } });
       },
       getWeeklySedekah: () => {
         const now = dayjs();

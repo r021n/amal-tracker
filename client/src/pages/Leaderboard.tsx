@@ -31,60 +31,56 @@ export default function Leaderboard() {
 
   return (
     <div className="mx-auto max-w-md space-y-5 p-4 pb-24">
-      <section className="rounded-[28px] border-2 border-black bg-white">
-        <div className="border-b-2 border-black px-5 py-5">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gray-500">
-            Papan Peringkat
-          </p>
-          <h1 className="mt-2 text-3xl font-black leading-none">
-            Amal Terbaik
-          </h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Lihat siapa yang paling konsisten menjaga streak ibadahnya.
-          </p>
-        </div>
+      <div className="px-5 py-5">
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gray-500">
+          Papan Peringkat
+        </p>
+        <h1 className="mt-2 text-3xl font-black leading-none">Amal Terbaik</h1>
+        <p className="mt-2 text-sm text-gray-600">
+          Lihat siapa yang paling konsisten menjaga streak ibadahnya.
+        </p>
+      </div>
 
-        <div className="bg-stone-50 px-4 py-5">
-          <div className="grid grid-cols-3 items-end gap-3">
-            {[topThree[1], topThree[0], topThree[2]].map((user, displayIndex) => {
-              const originalIndex =
-                displayIndex === 0 ? 1 : displayIndex === 1 ? 0 : 2;
-              const rank = originalIndex + 1;
+      <div className="px-4 py-5">
+        <div className="grid grid-cols-3 items-end gap-3">
+          {[topThree[1], topThree[0], topThree[2]].map((user, displayIndex) => {
+            const originalIndex =
+              displayIndex === 0 ? 1 : displayIndex === 1 ? 0 : 2;
+            const rank = originalIndex + 1;
 
-              return (
-                <div key={user.name} className="text-center">
-                  <div className="mb-2 flex flex-col items-center">
-                    <div className="grid h-14 w-14 place-items-center rounded-full border-2 border-black bg-black text-lg font-black text-white">
-                      {user.avatar}
-                    </div>
-                    <p className="mt-2 text-sm font-bold leading-tight">
-                      {user.name}
-                    </p>
-                    <span className="mt-1 inline-flex items-center gap-1 rounded-full border-2 border-black bg-white px-2.5 py-1 text-[11px] font-semibold">
-                      <img
-                        src={fireIcon}
-                        alt=""
-                        aria-hidden="true"
-                        className="h-3.5 w-3.5"
-                      />
-                      {user.streak}
-                    </span>
+            return (
+              <div key={user.name} className="text-center">
+                <div className="mb-2 flex flex-col items-center">
+                  <div className="grid h-14 w-14 place-items-center rounded-full border-2 border-black bg-black text-lg font-black text-white">
+                    {user.avatar}
                   </div>
-                  <div
-                    className={`flex ${getPodiumHeight(originalIndex)} items-start justify-center rounded-t-[22px] border-2 border-black border-b-0 ${getPodiumTone(originalIndex)} px-2 pt-3`}
-                  >
-                    <span className="rounded-full border-2 border-black bg-white px-3 py-1 text-sm font-black">
-                      #{rank}
-                    </span>
-                  </div>
+                  <p className="mt-2 text-sm font-bold leading-tight">
+                    {user.name}
+                  </p>
+                  <span className="mt-1 inline-flex items-center gap-1 rounded-full border-2 border-black bg-white px-2.5 py-1 text-[11px] font-semibold">
+                    <img
+                      src={fireIcon}
+                      alt=""
+                      aria-hidden="true"
+                      className="h-3.5 w-3.5"
+                    />
+                    {user.streak}
+                  </span>
                 </div>
-              );
-            })}
-          </div>
+                <div
+                  className={`flex ${getPodiumHeight(originalIndex)} items-start justify-center rounded-t-[22px] border-2 border-black border-b-0 ${getPodiumTone(originalIndex)} px-2 pt-3`}
+                >
+                  <span className="rounded-full border-2 border-black bg-white px-3 py-1 text-sm font-black">
+                    #{rank}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
         </div>
-      </section>
+      </div>
 
-      <section className="rounded-[26px] border-2 border-black bg-stone-50 p-4">
+      <div className=" p-4">
         <div className="flex items-center justify-between gap-3">
           <div>
             <h2 className="text-2xl font-extrabold leading-none">
@@ -131,7 +127,7 @@ export default function Leaderboard() {
             );
           })}
         </div>
-      </section>
+      </div>
     </div>
   );
 }

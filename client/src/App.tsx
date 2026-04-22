@@ -9,19 +9,19 @@ import BottomNav from "./components/BottomNav";
 import { useUserStore } from "./store/useUserStore";
 
 function ProtectedRoute() {
-  const pin = useUserStore((s) => s.pin);
+  const password = useUserStore((s) => s.password);
   const isAuthenticated = useUserStore((s) => s.isAuthenticated);
-  if (!pin) return <Navigate to="/profile" replace />;
+  if (!password) return <Navigate to="/profile" replace />;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   return <Outlet />;
 }
 
 export default function App() {
-  const pin = useUserStore((s) => s.pin);
+  const password = useUserStore((s) => s.password);
   const isAuthenticated = useUserStore((s) => s.isAuthenticated);
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
+    <div className="min-h-screen bg-stone-100 pb-24">
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
@@ -34,7 +34,10 @@ export default function App() {
         <Route
           path="*"
           element={
-            <Navigate to={pin && isAuthenticated ? "/" : "/login"} replace />
+            <Navigate
+              to={password && isAuthenticated ? "/" : "/login"}
+              replace
+            />
           }
         />
       </Routes>

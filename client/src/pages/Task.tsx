@@ -42,11 +42,11 @@ export default function Task() {
   const removeCustom = useTaskStore((s) => s.removeCustom);
   const [customName, setCustomName] = useState("");
 
-  const [isSholatExpanded, setSholatExpanded] = useState(true);
-  const [isDzikirExpanded, setDzikirExpanded] = useState(true);
-  const [isQuranExpanded, setQuranExpanded] = useState(true);
-  const [isSedekahExpanded, setSedekahExpanded] = useState(true);
-  const [isCustomExpanded, setCustomExpanded] = useState(true);
+  const [isSholatExpanded, setSholatExpanded] = useState(false);
+  const [isDzikirExpanded, setDzikirExpanded] = useState(false);
+  const [isQuranExpanded, setQuranExpanded] = useState(false);
+  const [isSedekahExpanded, setSedekahExpanded] = useState(false);
+  const [isCustomExpanded, setCustomExpanded] = useState(false);
 
   const sholatDoneCount = useMemo(
     () => sholat.filter((s) => today.sholat[s.k] !== "none").length,
@@ -58,17 +58,26 @@ export default function Task() {
     [today.custom],
   );
 
+  const isQuranChecked = today.quran.pages > 0 && today.quran.done;
+  const isSedekahChecked = today.sedekah.amount > 0 && today.sedekah.done;
+
   const totalChecklist = 9 + today.custom.length;
   const doneChecklist =
     sholatDoneCount +
     Number(today.dzikirPagi) +
     Number(today.dzikirPetang) +
-    Number(today.quran.done) +
-    Number(today.sedekah.done) +
+    Number(isQuranChecked) +
+    Number(isSedekahChecked) +
     customDoneCount;
   const progressPercent = Math.round(
     (doneChecklist / Math.max(1, totalChecklist)) * 100,
   );
+  const progressTone =
+    progressPercent >= 80
+      ? "bg-emerald-300/80"
+      : progressPercent >= 50
+        ? "bg-amber-300/80"
+        : "bg-rose-300/80";
 
   const hijriDate = dayjs().calendar("hijri").format("D MMMM YYYY [H]");
   const gregorianDate = dayjs().format("D MMM YYYY");
@@ -89,7 +98,7 @@ export default function Task() {
   };
 
   return (
-    <div className="p-4 max-w-md mx-auto pb-24">
+    <div className="p-8 max-w-md mx-auto pb-24">
       <div className="rounded-[28px] border-2 border-black bg-white">
         <div className="relative px-5 pt-7 pb-5 text-center">
           <h1 className="text-3xl font-black tracking-tight">
@@ -101,11 +110,29 @@ export default function Task() {
           <p className="text-sm text-gray-500">{gregorianDate}</p>
         </div>
 
-        <div className="h-2 border-y-2 border-black bg-gray-200">
-          <div
-            className="h-full bg-red-500 transition-all duration-300"
-            style={{ width: `${progressPercent}%` }}
-          />
+        <div className="px-4 pb-4">
+          <div className="relative overflow-hidden rounded-2xl border-2 border-black bg-stone-50">
+            <div
+              className={`absolute inset-y-0 left-0 transition-all duration-300 ${progressTone}`}
+              style={{ width: `${progressPercent}%` }}
+            />
+            <div className="relative p-3">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-xs uppercase tracking-wide text-gray-600">
+                  Progress Ibadah
+                </p>
+                <span className="rounded-full border-2 border-black/60 bg-white/70 px-2 py-0.5 text-[11px] font-semibold">
+                  {progressPercent}%
+                </span>
+              </div>
+              <p className="mt-1 text-3xl font-black leading-none text-black">
+                {doneChecklist}
+                <span className="ml-1 text-base font-semibold text-gray-700">
+                  / {totalChecklist} checklist
+                </span>
+              </p>
+            </div>
+          </div>
         </div>
 
         <div className="px-3 pb-3 divide-y divide-gray-200">
@@ -224,7 +251,7 @@ export default function Task() {
                 disabled={today.quran.pages <= 0}
                 className="disabled:opacity-40"
               >
-                <CircleStatus checked={today.quran.done} />
+                <CircleStatus checked={isQuranChecked} />
               </button>
               <h2
                 className={`text-2xl font-bold ${today.quran.pages <= 0 ? "opacity-40" : ""}`}
@@ -277,7 +304,7 @@ export default function Task() {
                 disabled={today.sedekah.amount <= 0}
                 className="disabled:opacity-40"
               >
-                <CircleStatus checked={today.sedekah.done} />
+                <CircleStatus checked={isSedekahChecked} />
               </button>
               <h2
                 className={`text-2xl font-bold ${today.sedekah.amount <= 0 ? "opacity-40" : ""}`}

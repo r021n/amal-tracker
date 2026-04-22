@@ -39,7 +39,7 @@ export default function Home() {
   ).length;
 
   return (
-    <div className="p-4 space-y-5 max-w-md mx-auto">
+    <div className="p-8 space-y-5 max-w-md mx-auto">
       <div className="flex items-start justify-between gap-3">
         <div className="text-left">
           <p className="text-2xl sm:text-3xl font-bold">Assalamu'alaikum,</p>

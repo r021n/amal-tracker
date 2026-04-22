@@ -6,9 +6,39 @@ import { useShallow } from "zustand/react/shallow";
 export default function Calendar() {
   const [mode, setMode] = useState<"hijri" | "gregory">("hijri");
   const days = useTaskStore(useShallow((s) => s.days));
-  const todayStr = dayjs().format("YYYY-MM-DD");
-  const start = dayjs().startOf("month");
-  const count = dayjs().daysInMonth();
+  const weekdayLabels = ["S", "S", "R", "K", "J", "S", "M"];
+  const today = dayjs();
+  const todayStr = today.format("YYYY-MM-DD");
+  const gregoryMonthStart = today.startOf("month");
+  const gregoryMonthCount = today.daysInMonth();
+  const gregoryMonthKey = gregoryMonthStart.format("YYYY-MM");
+
+  const hijriMonthKey = today.calendar("hijri").format("YYYY-MM");
+  const findHijriBoundary = (direction: 1 | -1) => {
+    let cursor = today;
+    while (
+      cursor.add(direction, "day").calendar("hijri").format("YYYY-MM") ===
+      hijriMonthKey
+    ) {
+      cursor = cursor.add(direction, "day");
+    }
+    return cursor;
+  };
+  const hijriMonthStart = findHijriBoundary(-1);
+  const hijriMonthEnd = findHijriBoundary(1);
+  const hijriMonthCount = hijriMonthEnd.diff(hijriMonthStart, "day") + 1;
+
+  const activeMonthStart =
+    mode === "hijri" ? hijriMonthStart : gregoryMonthStart;
+  const activeMonthCount =
+    mode === "hijri" ? hijriMonthCount : gregoryMonthCount;
+
+  // Monday-first offset so weekday headers align with date cells.
+  const startOffset = (activeMonthStart.day() + 6) % 7;
+  const gridStart = activeMonthStart.subtract(startOffset, "day");
+  const calendarDates = Array.from({ length: 42 }, (_, i) =>
+    gridStart.add(i, "day"),
+  );
 
   const hasKebaikan = (dateStr: string) => {
     const d = days[dateStr];
@@ -17,8 +47,8 @@ export default function Calendar() {
       Object.values(d.sholat).some((v) => v === "done") ||
       d.dzikirPagi ||
       d.dzikirPetang ||
-      d.quran.done ||
-      d.sedekah.done ||
+      (d.quran.pages > 0 && d.quran.done) ||
+      (d.sedekah.amount > 0 && d.sedekah.done) ||
       d.custom.some((c) => c.done)
     );
   };
@@ -31,20 +61,26 @@ export default function Calendar() {
       sholatComplete &&
       d.dzikirPagi &&
       d.dzikirPetang &&
+      d.quran.pages > 0 &&
       d.quran.done &&
+      d.sedekah.amount > 0 &&
       d.sedekah.done
     );
   };
 
-  const perfectDays = Array.from({ length: count }).filter((_, i) => {
-    const dateStr = start.add(i, "day").format("YYYY-MM-DD");
-    return isPerfectDay(dateStr);
-  }).length;
+  const perfectDays = Array.from({ length: activeMonthCount }).filter(
+    (_, i) => {
+      const dateStr = activeMonthStart.add(i, "day").format("YYYY-MM-DD");
+      return isPerfectDay(dateStr);
+    },
+  ).length;
 
   const monthLabel =
     mode === "hijri"
-      ? dayjs().calendar("hijri").format("MMMM YYYY [H]")
-      : dayjs().format("MMMM YYYY");
+      ? activeMonthStart.calendar("hijri").format("MMMM YYYY [H]")
+      : activeMonthStart.format("MMMM YYYY");
+
+  const activeMonthTotal = activeMonthCount;
 
   return (
     <div className="rounded-[26px] border-2 border-black bg-stone-50 p-4 sm:p-5">
@@ -56,7 +92,7 @@ export default function Calendar() {
           <p className="text-3xl font-black">
             {perfectDays}{" "}
             <span className="text-xl font-semibold text-gray-600">
-              / {count}
+              / {activeMonthTotal}
             </span>
           </p>
         </div>
@@ -86,28 +122,44 @@ export default function Calendar() {
       </p>
 
       <div className="mt-3 grid grid-cols-7 gap-2 text-center">
-        {Array.from({ length: count }).map((_, i) => {
-          const date = start.add(i, "day");
+        {weekdayLabels.map((label, idx) => (
+          <div
+            key={`${label}-${idx}`}
+            className="text-[11px] font-bold uppercase tracking-wide text-gray-500"
+          >
+            {label}
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-2 grid grid-cols-7 gap-2 text-center">
+        {calendarDates.map((date) => {
           const dateStr = date.format("YYYY-MM-DD");
           const isToday = dateStr === todayStr;
+          const isCurrentMonth =
+            mode === "hijri"
+              ? date.calendar("hijri").format("YYYY-MM") === hijriMonthKey
+              : date.format("YYYY-MM") === gregoryMonthKey;
           const kebaikan = hasKebaikan(dateStr);
           const perfect = isPerfectDay(dateStr);
           const label =
             mode === "hijri"
               ? date.calendar("hijri").format("D")
               : date.format("D");
-          const tone = isToday
-            ? "bg-emerald-500 text-white"
-            : perfect
-              ? "bg-sky-300 text-black"
-              : kebaikan
-                ? "bg-amber-300 text-black"
-                : "bg-white text-gray-700";
+          const tone = !isCurrentMonth
+            ? "bg-stone-100 text-gray-400 border-black/40"
+            : isToday
+              ? "bg-emerald-500 text-white"
+              : perfect
+                ? "bg-sky-300 text-black"
+                : kebaikan
+                  ? "bg-amber-300 text-black"
+                  : "bg-white text-gray-700";
 
           return (
             <div
               key={dateStr}
-              className={`h-8 w-8 border-2 border-black rounded-full grid place-items-center text-xs font-semibold ${tone}`}
+              className={`h-8 w-8 rounded-full border-2 grid place-items-center text-xs font-semibold transition-colors ${tone} ${!isCurrentMonth ? "opacity-70" : ""}`}
             >
               {label}
             </div>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useUserStore } from "../store/useUserStore";
 import { useTaskStore } from "../store/useTaskStore";
 import { useShallow } from "zustand/react/shallow";
+import { motion, AnimatePresence } from "motion/react";
 import Calendar from "../components/Calendar";
 import fireIcon from "../assets/home/fire.svg";
 
@@ -34,171 +35,373 @@ export default function Home() {
   const sholatDone = sholatItems.filter(
     (item) => today.sholat[item.key] === "done",
   ).length;
-  const sholatLogged = sholatItems.filter(
-    (item) => today.sholat[item.key] !== "none",
-  ).length;
 
   return (
-    <div className="p-8 space-y-5 max-w-md mx-auto">
-      <div className="flex items-start justify-between gap-3">
+    <div className="p-8 pb-24 space-y-5 max-w-md mx-auto">
+      <div className="flex items-start justify-between gap-4">
         <div className="text-left">
-          <p className="text-2xl sm:text-3xl font-bold">Assalamu'alaikum,</p>
-          <h1 className="text-2xl sm:text-3xl font-black leading-tight mt-0.5">
-            {name || "Sahabat"}
-          </h1>
+          <div className="flex items-baseline gap-2 flex-wrap">
+            <p className="text-lg font-bold text-gray-400">Assalamu'alaikum,</p>
+            <h1 className="text-2xl font-black text-black tracking-tighter">
+              {name || "Sahabat"}
+            </h1>
+          </div>
+          <p className="mt-1 text-sm font-bold text-gray-500">
+            Sudahkah kamu beramal hari ini?
+          </p>
         </div>
 
-        <div className="shrink-0 flex items-center gap-1.5 mt-1.5">
-          <img src={fireIcon} alt="" aria-hidden="true" className="h-6 w-6" />
-          <p className="text-2xl font-black leading-none text-black">
-            {streak}
-          </p>
+        <div className="shrink-0 flex items-center gap-2.5 mt-1">
+          <img src={fireIcon} alt="" aria-hidden="true" className="h-8 w-8" />
+          <div className="flex flex-col">
+            <p className="text-2xl font-black leading-none text-black">
+              {streak}
+            </p>
+            <p className="text-[9px] font-black uppercase tracking-widest text-gray-400">
+              Days
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="rounded-[26px] border-2 border-black bg-stone-50 p-4 sm:p-5">
-        <div className="flex items-start justify-between gap-3">
+      <motion.div
+        layout
+        className="rounded-[26px] border-2 border-black bg-stone-50 p-5"
+        transition={{ layout: { duration: 0.3, type: "spring", bounce: 0, stiffness: 200, damping: 25 } }}
+      >
+        <div className="flex items-center justify-between gap-3">
           <div>
-            <h2 className="text-2xl font-extrabold leading-none">
+            <h2 className="text-2xl font-black leading-none tracking-tight">
               Sholat Wajib
             </h2>
-            <p className="mt-1 text-sm text-gray-500">
-              Monitoring 5 waktu hari ini
+            <p className="mt-1.5 text-xs font-bold text-gray-500 uppercase tracking-widest">
+              5 Waktu Hari Ini
             </p>
           </div>
-          <p className="rounded-full border-2 border-black bg-white px-3 py-1 text-xs font-semibold">
-            {sholatDone}/5 done
-          </p>
+
+          <div className="relative flex h-14 w-14 shrink-0 items-center justify-center">
+            <svg className="h-full w-full -rotate-90">
+              <circle
+                cx="28"
+                cy="28"
+                r="22"
+                stroke="black"
+                strokeWidth="5"
+                fill="white"
+              />
+              <circle
+                cx="28"
+                cy="28"
+                r="22"
+                stroke="#10b981"
+                strokeWidth="5"
+                fill="transparent"
+                strokeDasharray={2 * Math.PI * 22}
+                strokeDashoffset={2 * Math.PI * 22 * (1 - sholatDone / 5)}
+                strokeLinecap="round"
+                className="transition-all duration-1000 ease-in-out"
+              />
+            </svg>
+            <div className="absolute flex flex-col items-center justify-center leading-none">
+              <span className="text-sm font-black">{sholatDone}</span>
+              <span className="text-[8px] font-bold text-gray-400">/5</span>
+            </div>
+          </div>
         </div>
 
-        {!isSholatExpanded && (
-          <div className="mt-4 flex flex-wrap gap-2">
-            {sholatItems.map((item) => {
-              const status = today.sholat[item.key];
-              const chipClass =
-                status === "done"
-                  ? "border-emerald-700 bg-emerald-500 text-white"
-                  : status === "halangan"
-                    ? "border-amber-700 bg-amber-300 text-black"
-                    : "border-black bg-white text-gray-600";
-
-              return (
-                <span
-                  key={item.key}
-                  className={`rounded-full border-2 px-2.5 py-1 text-xs font-semibold ${chipClass}`}
+        <AnimatePresence mode="wait">
+          {!isSholatExpanded ? (
+            <motion.div
+              key="collapsed"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="mt-5 flex items-center justify-between rounded-2xl border-2 border-black bg-white p-3"
+            >
+              <div className="flex gap-2.5">
+                {sholatItems.map((item) => {
+                  const status = today.sholat[item.key];
+                  return (
+                    <div
+                      key={item.key}
+                      className="flex flex-col items-center gap-1"
+                    >
+                      <div
+                        className={`h-8 w-8 rounded-lg border-2 border-black flex items-center justify-center ${
+                          status === "done"
+                            ? "bg-emerald-400"
+                            : status === "halangan"
+                              ? "bg-amber-300"
+                              : "bg-gray-100"
+                        }`}
+                      >
+                        {status === "done" ? (
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="#10b981"
+                            stroke="black"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        ) : status === "halangan" ? (
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="#fbbf24"
+                            stroke="black"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M18 6L6 18M6 6l12 12" />
+                          </svg>
+                        ) : (
+                          <div className="h-1.5 w-1.5 rounded-full bg-gray-400" />
+                        )}
+                      </div>
+                      <span className="text-[9px] font-black uppercase text-gray-400">
+                        {item.label[0]}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+              <button
+                onClick={() => setSholatExpanded(true)}
+                className="flex h-8 w-8 items-center justify-center rounded-lg border-2 border-black bg-white"
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="black"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 >
-                  {item.label}
-                </span>
-              );
-            })}
-          </div>
-        )}
-
-        {isSholatExpanded && (
-          <div className="mt-4 space-y-2">
-            {sholatItems.map((item) => {
-              const status = today.sholat[item.key];
-              const badgeClass =
-                status === "done"
-                  ? "border-emerald-700 bg-emerald-500 text-white"
-                  : status === "halangan"
-                    ? "border-amber-700 bg-amber-300 text-black"
-                    : "border-black bg-white text-gray-500";
-
-              const statusText =
-                status === "done"
-                  ? "Tunaikan"
-                  : status === "halangan"
-                    ? "Halangan"
-                    : "Belum";
-
-              return (
-                <div
-                  key={item.key}
-                  className="flex items-center justify-between rounded-xl border-2 border-black/70 bg-white px-3 py-2"
-                >
-                  <div>
-                    <p className="text-base font-semibold leading-none">
-                      {item.label}
-                    </p>
-                    <p className="mt-1 text-[11px] text-gray-500">
-                      {item.window}
-                    </p>
-                  </div>
-                  <span
-                    className={`min-w-20 rounded-full border-2 px-2 py-1 text-center text-[11px] font-semibold ${badgeClass}`}
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="expanded"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="overflow-hidden"
+            >
+              <div className="mt-5 space-y-2.5">
+                {sholatItems.map((item) => {
+                  const status = today.sholat[item.key];
+                  return (
+                    <div
+                      key={item.key}
+                      className="group flex items-center justify-between rounded-2xl border-2 border-black bg-white p-3 transition-all hover:bg-stone-50"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`flex h-10 w-10 items-center justify-center rounded-xl border-2 border-black ${
+                            status === "done"
+                              ? "bg-emerald-400"
+                              : status === "halangan"
+                                ? "bg-amber-300"
+                                : "bg-stone-100"
+                          }`}
+                        >
+                          {status === "done" ? (
+                            <svg
+                              width="20"
+                              height="20"
+                              viewBox="0 0 24 24"
+                              fill="#10b981"
+                              stroke="black"
+                              strokeWidth="2.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          ) : status === "halangan" ? (
+                            <svg
+                              width="20"
+                              height="20"
+                              viewBox="0 0 24 24"
+                              fill="#fbbf24"
+                              stroke="black"
+                              strokeWidth="2.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M18 6L6 18M6 6l12 12" />
+                            </svg>
+                          ) : (
+                            <svg
+                              width="20"
+                              height="20"
+                              viewBox="0 0 24 24"
+                              fill="#f5f5f4"
+                              stroke="black"
+                              strokeWidth="2.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <circle cx="12" cy="12" r="10" />
+                              <path d="M12 6v6l4 2" />
+                            </svg>
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-sm font-black leading-none">
+                            {item.label}
+                          </p>
+                          <p className="mt-1 text-[10px] font-bold text-gray-400 uppercase tracking-tight">
+                            {item.window}
+                          </p>
+                        </div>
+                      </div>
+                      <div
+                        className={`rounded-full border-2 border-black px-3 py-1 text-[10px] font-black uppercase ${
+                          status === "done"
+                            ? "bg-emerald-100 text-emerald-700"
+                            : status === "halangan"
+                              ? "bg-amber-100 text-amber-700"
+                              : "bg-stone-100 text-gray-500"
+                        }`}
+                      >
+                        {status === "done"
+                          ? "Done"
+                          : status === "halangan"
+                            ? "Skip"
+                            : "Pending"}
+                      </div>
+                    </div>
+                  );
+                })}
+                <div className="flex justify-center pt-2">
+                  <button
+                    onClick={() => setSholatExpanded(false)}
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-black bg-white"
                   >
-                    {statusText}
-                  </span>
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="black"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="m18 15-6-6-6 6" />
+                    </svg>
+                  </button>
                 </div>
-              );
-            })}
-          </div>
-        )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
 
-        <p className="mt-3 text-xs text-gray-600">
-          {sholatLogged}/5 waktu sudah dicatat (termasuk halangan).
-        </p>
-        <button
-          type="button"
-          onClick={() => setSholatExpanded((v) => !v)}
-          className="mt-2 rounded-full border-2 border-black bg-white px-3 py-1 text-xs font-semibold"
-        >
-          {isSholatExpanded ? "Ringkas" : "Lihat detail"}
-        </button>
-      </div>
-
-      <div className="space-y-3">
-        <div className="relative overflow-hidden rounded-2xl border-2 border-black bg-stone-50">
+      <div className="grid grid-cols-2 gap-3">
+        {/* Sedekah Card */}
+        <div className="relative flex flex-col justify-between overflow-hidden rounded-3xl border-2 border-black bg-stone-50 p-5 aspect-[4/5]">
           <div
-            className="absolute inset-y-0 left-0 bg-emerald-300/70"
-            style={{ width: `${sedekahPercent}%` }}
+            className="absolute inset-x-0 bottom-0 bg-emerald-300/60 transition-all duration-1000 ease-out"
+            style={{ height: `${sedekahPercent}%` }}
           />
-          <div className="relative p-4">
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-xs uppercase tracking-wide text-gray-600">
-                Sedekah pekan
-              </p>
-              <span className="rounded-full border-2 border-black/60 bg-white/70 px-2 py-0.5 text-[11px] font-semibold">
+
+          <div className="relative z-10">
+            <div className="flex items-start justify-between">
+              <div className="rounded-xl border-2 border-black bg-white p-2.5">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="#fbbf24"
+                  stroke="black"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4" />
+                  <path d="M4 6v12c0 1.1.9 2 2 2h14v-4" />
+                  <path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4Z" />
+                </svg>
+              </div>
+              <div className="rounded-full border-2 border-black bg-white/90 px-2 py-0.5 text-[11px] font-black">
                 {Math.round(sedekahPercent)}%
-              </span>
+              </div>
             </div>
-            <p className="mt-1 text-3xl font-black leading-none text-black">
-              {weeklySedekah.toLocaleString("id-ID")}
-              <span className="ml-1 text-base font-semibold text-gray-700">
-                / {targetSedekah.toLocaleString("id-ID")}
-              </span>
+            <p className="mt-4 text-[10px] font-black uppercase tracking-widest text-gray-500">
+              Sedekah Pekan
             </p>
-            <p className="mt-1 text-xs text-gray-600">
-              Akumulasi sedekah sejak Jumat 18.00
+          </div>
+
+          <div className="relative z-10">
+            <h3 className="text-4xl font-black leading-none text-black tracking-tighter">
+              {weeklySedekah >= 1000
+                ? `${(weeklySedekah / 1000).toFixed(0)}k`
+                : weeklySedekah}
+            </h3>
+            <p className="mt-1 text-xs font-bold text-gray-600">
+              /{" "}
+              {targetSedekah >= 1000
+                ? `${(targetSedekah / 1000).toFixed(0)}k`
+                : targetSedekah}{" "}
+              target
             </p>
           </div>
         </div>
 
-        <div className="relative overflow-hidden rounded-2xl border-2 border-black bg-stone-50">
+        {/* Quran Card */}
+        <div className="relative flex flex-col justify-between overflow-hidden rounded-3xl border-2 border-black bg-stone-50 p-5 aspect-[4/5]">
           <div
-            className="absolute inset-y-0 left-0 bg-sky-300/70"
-            style={{ width: `${quranPercent}%` }}
+            className="absolute inset-x-0 bottom-0 bg-sky-300/60 transition-all duration-1000 ease-out"
+            style={{ height: `${quranPercent}%` }}
           />
-          <div className="relative p-4">
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-xs uppercase tracking-wide text-gray-600">
-                Quran hari ini
-              </p>
-              <span className="rounded-full border-2 border-black/60 bg-white/70 px-2 py-0.5 text-[11px] font-semibold">
+
+          <div className="relative z-10">
+            <div className="flex items-start justify-between">
+              <div className="rounded-xl border-2 border-black bg-white p-2.5">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="#38bdf8"
+                  stroke="black"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                </svg>
+              </div>
+              <div className="rounded-full border-2 border-black bg-white/90 px-2 py-0.5 text-[11px] font-black">
                 {Math.round(quranPercent)}%
-              </span>
+              </div>
             </div>
-            <p className="mt-1 text-3xl font-black leading-none text-black">
-              {today.quran.pages}
-              <span className="ml-1 text-base font-semibold text-gray-700">
-                / {targetQuran} halaman
-              </span>
+            <p className="mt-4 text-[10px] font-black uppercase tracking-[0.1em] text-gray-500">
+              Tilawah Harian
             </p>
-            <p className="mt-1 text-xs text-gray-600">
-              {today.quran.done
-                ? "Target hari ini selesai"
-                : "Lanjutkan bacaan untuk capai target"}
+          </div>
+
+          <div className="relative z-10">
+            <h3 className="text-4xl font-black leading-none text-black tracking-tighter">
+              {today.quran.pages}
+            </h3>
+            <p className="mt-1 text-xs font-bold text-gray-600">
+              / {targetQuran} halaman
             </p>
           </div>
         </div>

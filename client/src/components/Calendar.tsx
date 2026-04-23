@@ -2,6 +2,7 @@ import { useState } from "react";
 import dayjs from "../lib/dayjs";
 import { useTaskStore } from "../store/useTaskStore";
 import { useShallow } from "zustand/react/shallow";
+import { motion, AnimatePresence } from "motion/react";
 
 export default function Calendar() {
   const [mode, setMode] = useState<"hijri" | "gregory">("hijri");
@@ -89,27 +90,36 @@ export default function Calendar() {
           <h2 className="text-3xl font-extrabold leading-none">Calendar</h2>
           <p className="mt-1 text-sm text-gray-500">Ibadah streak</p>
           <p className="mt-5 text-sm text-gray-500">Hari sempurna</p>
-          <p className="text-3xl font-black">
-            {perfectDays}{" "}
-            <span className="text-xl font-semibold text-gray-600">
-              / {activeMonthTotal}
-            </span>
-          </p>
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={mode}
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -5 }}
+              transition={{ duration: 0.2 }}
+              className="text-3xl font-black"
+            >
+              {perfectDays}{" "}
+              <span className="text-xl font-semibold text-gray-600">
+                / {activeMonthTotal}
+              </span>
+            </motion.p>
+          </AnimatePresence>
         </div>
 
         <div className="rounded-full border-2 border-black p-1 bg-white flex items-center gap-1">
           <button
             onClick={() => setMode("hijri")}
-            className={`rounded-full px-3 py-1 text-xs font-semibold ${
-              mode === "hijri" ? "bg-black text-white" : "text-gray-500"
+            className={`rounded-full px-3 py-1 text-xs font-semibold transition-all ${
+              mode === "hijri" ? "bg-black text-white" : "text-gray-500 hover:bg-stone-50"
             }`}
           >
             Hijriah
           </button>
           <button
             onClick={() => setMode("gregory")}
-            className={`rounded-full px-3 py-1 text-xs font-semibold ${
-              mode === "gregory" ? "bg-black text-white" : "text-gray-500"
+            className={`rounded-full px-3 py-1 text-xs font-semibold transition-all ${
+              mode === "gregory" ? "bg-black text-white" : "text-gray-500 hover:bg-stone-50"
             }`}
           >
             Masehi
@@ -117,55 +127,65 @@ export default function Calendar() {
         </div>
       </div>
 
-      <p className="mt-3 text-xs uppercase tracking-wide text-gray-500">
-        {monthLabel}
-      </p>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={mode}
+          initial={{ opacity: 0, x: 10 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -10 }}
+          transition={{ duration: 0.2 }}
+        >
+          <p className="mt-3 text-xs uppercase tracking-wide text-gray-500">
+            {monthLabel}
+          </p>
 
-      <div className="mt-3 grid grid-cols-7 gap-2 text-center">
-        {weekdayLabels.map((label, idx) => (
-          <div
-            key={`${label}-${idx}`}
-            className="text-[11px] font-bold uppercase tracking-wide text-gray-500"
-          >
-            {label}
+          <div className="mt-3 grid grid-cols-7 gap-2 text-center">
+            {weekdayLabels.map((label, idx) => (
+              <div
+                key={`${label}-${idx}`}
+                className="text-[11px] font-bold uppercase tracking-wide text-gray-500"
+              >
+                {label}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      <div className="mt-2 grid grid-cols-7 gap-2 text-center">
-        {calendarDates.map((date) => {
-          const dateStr = date.format("YYYY-MM-DD");
-          const isToday = dateStr === todayStr;
-          const isCurrentMonth =
-            mode === "hijri"
-              ? date.calendar("hijri").format("YYYY-MM") === hijriMonthKey
-              : date.format("YYYY-MM") === gregoryMonthKey;
-          const kebaikan = hasKebaikan(dateStr);
-          const perfect = isPerfectDay(dateStr);
-          const label =
-            mode === "hijri"
-              ? date.calendar("hijri").format("D")
-              : date.format("D");
-          const tone = !isCurrentMonth
-            ? "bg-stone-100 text-gray-400 border-black/40"
-            : isToday
-              ? "bg-emerald-500 text-white"
-              : perfect
-                ? "bg-sky-300 text-black"
-                : kebaikan
-                  ? "bg-amber-300 text-black"
-                  : "bg-white text-gray-700";
+          <div className="mt-2 grid grid-cols-7 gap-2 text-center">
+            {calendarDates.map((date) => {
+              const dateStr = date.format("YYYY-MM-DD");
+              const isToday = dateStr === todayStr;
+              const isCurrentMonth =
+                mode === "hijri"
+                  ? date.calendar("hijri").format("YYYY-MM") === hijriMonthKey
+                  : date.format("YYYY-MM") === gregoryMonthKey;
+              const kebaikan = hasKebaikan(dateStr);
+              const perfect = isPerfectDay(dateStr);
+              const label =
+                mode === "hijri"
+                  ? date.calendar("hijri").format("D")
+                  : date.format("D");
+              const tone = !isCurrentMonth
+                ? "bg-stone-100 text-gray-400 border-black/40"
+                : isToday
+                  ? "bg-emerald-500 text-white"
+                  : perfect
+                    ? "bg-sky-300 text-black"
+                    : kebaikan
+                      ? "bg-amber-300 text-black"
+                      : "bg-white text-gray-700";
 
-          return (
-            <div
-              key={dateStr}
-              className={`h-8 w-8 rounded-full border-2 grid place-items-center text-xs font-semibold transition-colors ${tone} ${!isCurrentMonth ? "opacity-70" : ""}`}
-            >
-              {label}
-            </div>
-          );
-        })}
-      </div>
+              return (
+                <div
+                  key={dateStr}
+                  className={`h-8 w-8 rounded-full border-2 grid place-items-center text-xs font-semibold transition-colors ${tone} ${!isCurrentMonth ? "opacity-70" : ""}`}
+                >
+                  {label}
+                </div>
+              );
+            })}
+          </div>
+        </motion.div>
+      </AnimatePresence>
 
       <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-gray-600">
         <span className="inline-flex items-center gap-1">

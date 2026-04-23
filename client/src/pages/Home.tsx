@@ -67,7 +67,15 @@ export default function Home() {
       <motion.div
         layout
         className="rounded-[26px] border-2 border-black bg-stone-50 p-5"
-        transition={{ layout: { duration: 0.3, type: "spring", bounce: 0, stiffness: 200, damping: 25 } }}
+        transition={{
+          layout: {
+            duration: 0.3,
+            type: "spring",
+            bounce: 0,
+            stiffness: 200,
+            damping: 25,
+          },
+        }}
       >
         <div className="flex items-center justify-between gap-3">
           <div>
@@ -314,7 +322,7 @@ export default function Home() {
 
       <div className="grid grid-cols-2 gap-3">
         {/* Sedekah Card */}
-        <div className="relative flex flex-col justify-between overflow-hidden rounded-3xl border-2 border-black bg-stone-50 p-5 aspect-[4/5]">
+        <div className="relative flex flex-col justify-between overflow-hidden rounded-3xl border-2 border-black bg-stone-50 p-5 aspect-4/5">
           <div
             className="absolute inset-x-0 bottom-0 bg-emerald-300/60 transition-all duration-1000 ease-out"
             style={{ height: `${sedekahPercent}%` }}
@@ -364,7 +372,7 @@ export default function Home() {
         </div>
 
         {/* Quran Card */}
-        <div className="relative flex flex-col justify-between overflow-hidden rounded-3xl border-2 border-black bg-stone-50 p-5 aspect-[4/5]">
+        <div className="relative flex flex-col justify-between overflow-hidden rounded-3xl border-2 border-black bg-stone-50 p-5 aspect-4/5">
           <div
             className="absolute inset-x-0 bottom-0 bg-sky-300/60 transition-all duration-1000 ease-out"
             style={{ height: `${quranPercent}%` }}
@@ -391,7 +399,7 @@ export default function Home() {
                 {Math.round(quranPercent)}%
               </div>
             </div>
-            <p className="mt-4 text-[10px] font-black uppercase tracking-[0.1em] text-gray-500">
+            <p className="mt-4 text-[10px] font-black uppercase tracking-widest text-gray-500">
               Tilawah Harian
             </p>
           </div>

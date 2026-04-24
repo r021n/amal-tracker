@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { AnimatePresence, motion } from "motion/react";
 import { useUserStore } from "../store/useUserStore";
-
-type Gender = "L" | "P" | "";
 
 export default function Profile() {
   const {
@@ -15,12 +14,13 @@ export default function Profile() {
     logout,
     isAuthenticated,
   } = useUserStore();
+  const [isGenderOpen, setIsGenderOpen] = useState(false);
   const [form, setForm] = useState({
-    name: name ?? "",
-    password: password ?? "",
-    gender: (gender as Gender) ?? "",
-    targetSedekah: targetSedekah ?? 0,
-    targetQuran: targetQuran ?? 0,
+    name,
+    password,
+    gender,
+    targetSedekah,
+    targetQuran,
   });
   const navigate = useNavigate();
 
@@ -65,12 +65,37 @@ export default function Profile() {
 
       <form onSubmit={save} className="space-y-4 p-4">
         <div className="rounded-2xl border-2 border-black bg-white p-4">
-          <label
-            htmlFor="name"
-            className="text-xs font-semibold uppercase tracking-wide text-gray-500"
-          >
-            Nama
-          </label>
+          <div className="flex items-center justify-between">
+            <label
+              htmlFor="name"
+              className="text-xs font-semibold uppercase tracking-wide text-gray-500"
+            >
+              Nama
+            </label>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              className="h-6 w-6"
+            >
+              <circle
+                cx="12"
+                cy="8"
+                r="4"
+                fill="#BAE6FD"
+                stroke="black"
+                strokeWidth="2"
+              />
+              <path
+                d="M4 20C4 16.6863 7.58172 14 12 14C16.4183 14 20 16.6863 20 20"
+                fill="#BAE6FD"
+                stroke="black"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
           <input
             id="name"
             className="mt-2 w-full rounded-xl border-2 border-black/20 bg-stone-50 px-4 py-3 font-medium text-black outline-none transition-colors focus:border-black/50"
@@ -93,10 +118,33 @@ export default function Profile() {
                 Ganti sistem keamanan dari PIN ke password akun.
               </p>
             </div>
-            <span className="rounded-full border-2 border-black/15 bg-stone-100 px-3 py-1 text-[11px] font-semibold text-gray-700">
-              Minimal 1 karakter
-            </span>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              className="h-7 w-7"
+            >
+              <rect
+                x="5"
+                y="11"
+                width="14"
+                height="10"
+                rx="2"
+                fill="#FEF08A"
+                stroke="black"
+                strokeWidth="2"
+              />
+              <path
+                d="M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V11"
+                stroke="black"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+              <circle cx="12" cy="16" r="1.5" fill="black" />
+            </svg>
           </div>
+
           <input
             id="password"
             className="mt-3 w-full rounded-xl border-2 border-black/20 bg-stone-50 px-4 py-3 font-medium text-black outline-none transition-colors focus:border-black/50"
@@ -109,22 +157,106 @@ export default function Profile() {
         </div>
 
         <div className="rounded-2xl border-2 border-black bg-white p-4">
-          <label
-            htmlFor="gender"
-            className="text-xs font-semibold uppercase tracking-wide text-gray-500"
-          >
-            Gender
-          </label>
-          <select
-            id="gender"
-            className="mt-2 w-full rounded-xl border-2 border-black/20 bg-stone-50 px-4 py-3 font-medium text-black outline-none transition-colors focus:border-black/50"
-            value={form.gender}
-            onChange={(e) => updateField("gender", e.target.value as Gender)}
-          >
-            <option value="">Pilih gender</option>
-            <option value="L">Laki-laki</option>
-            <option value="P">Perempuan</option>
-          </select>
+          <div className="flex items-center justify-between">
+            <label
+              htmlFor="gender"
+              className="text-xs font-semibold uppercase tracking-wide text-gray-500"
+            >
+              Gender
+            </label>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              className="h-6 w-6"
+            >
+              <circle
+                cx="9"
+                cy="9"
+                r="5"
+                fill="#FBCFE8"
+                stroke="black"
+                strokeWidth="2"
+              />
+              <circle
+                cx="15"
+                cy="15"
+                r="5"
+                fill="#A5B4FC"
+                stroke="black"
+                strokeWidth="2"
+              />
+            </svg>
+          </div>
+          <div className="relative mt-2">
+            <button
+              type="button"
+              onClick={() => setIsGenderOpen(!isGenderOpen)}
+              className="flex w-full items-center justify-between rounded-xl border-2 border-black/20 bg-stone-50 pl-4 pr-5 py-3 font-medium text-black outline-none transition-colors focus:border-black/50"
+            >
+              <span>
+                {form.gender === "L"
+                  ? "Laki-laki"
+                  : form.gender === "P"
+                    ? "Perempuan"
+                    : "Pilih gender"}
+              </span>
+              <svg
+                className={`h-4 w-4 text-black/50 transition-transform ${isGenderOpen ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="3"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+
+            <AnimatePresence>
+              {isGenderOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute z-50 mt-2 w-full overflow-hidden rounded-2xl border-2 border-black bg-white"
+                >
+                  <div
+                    onClick={() => {
+                      updateField("gender", "");
+                      setIsGenderOpen(false);
+                    }}
+                    className="cursor-pointer p-4 transition-colors hover:bg-stone-100"
+                  >
+                    <p className="font-medium text-gray-400">Pilih gender</p>
+                  </div>
+                  <div
+                    onClick={() => {
+                      updateField("gender", "L");
+                      setIsGenderOpen(false);
+                    }}
+                    className={`cursor-pointer p-4 transition-colors hover:bg-stone-100 ${form.gender === "L" ? "bg-stone-50" : ""}`}
+                  >
+                    <p className="font-bold text-black">Laki-laki</p>
+                  </div>
+                  <div
+                    onClick={() => {
+                      updateField("gender", "P");
+                      setIsGenderOpen(false);
+                    }}
+                    className={`cursor-pointer p-4 transition-colors hover:bg-stone-100 ${form.gender === "P" ? "bg-stone-50" : ""}`}
+                  >
+                    <p className="font-bold text-black">Perempuan</p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
 
         <div className="space-y-3 rounded-[26px] border-2 border-black bg-white p-4">
@@ -140,39 +272,144 @@ export default function Profile() {
           </div>
 
           <div className="rounded-2xl border-2 border-black/10 bg-stone-50 p-4">
-            <label
-              htmlFor="targetSedekah"
-              className="text-xs font-semibold uppercase tracking-wide text-gray-500"
-            >
-              Target sedekah mingguan
-            </label>
-            <input
-              id="targetSedekah"
-              type="number"
-              className="mt-2 w-full rounded-xl border-2 border-black/15 bg-white px-4 py-3 font-medium text-black outline-none transition-colors focus:border-black/40"
-              value={form.targetSedekah}
-              onChange={(e) =>
-                updateField("targetSedekah", Number(e.target.value))
-              }
-            />
+            <div className="flex items-center justify-between">
+              <label
+                htmlFor="targetSedekah"
+                className="text-xs font-semibold uppercase tracking-wide text-gray-500"
+              >
+                Target sedekah mingguan
+              </label>
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                className="h-6 w-6"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="9"
+                  fill="#BBF7D0"
+                  stroke="black"
+                  strokeWidth="2"
+                />
+                <path
+                  d="M12 7V17M9 10L12 7L15 10"
+                  stroke="black"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+            <div className="mt-2 flex h-12 items-stretch overflow-hidden rounded-xl border-2 border-black/15 bg-white py-1 pl-4 pr-4 transition-colors focus-within:border-black/40">
+              <input
+                id="targetSedekah"
+                type="number"
+                className="h-full min-w-0 flex-1 bg-transparent pr-2 font-medium text-black outline-none"
+                value={form.targetSedekah}
+                onChange={(e) =>
+                  updateField(
+                    "targetSedekah",
+                    Math.max(0, Number(e.target.value)),
+                  )
+                }
+              />
+              <div className="flex shrink-0 items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() =>
+                    updateField(
+                      "targetSedekah",
+                      Math.max(0, form.targetSedekah - 1000),
+                    )
+                  }
+                  className="flex h-full w-9 items-center justify-center rounded-lg bg-black text-xl font-bold text-white active:scale-95"
+                >
+                  -
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    updateField("targetSedekah", form.targetSedekah + 1000)
+                  }
+                  className="flex h-full w-9 items-center justify-center rounded-lg bg-black text-xl font-bold text-white active:scale-95"
+                >
+                  +
+                </button>
+              </div>
+            </div>
           </div>
 
           <div className="rounded-2xl border-2 border-black/10 bg-stone-50 p-4">
-            <label
-              htmlFor="targetQuran"
-              className="text-xs font-semibold uppercase tracking-wide text-gray-500"
-            >
-              Target halaman Quran harian
-            </label>
-            <input
-              id="targetQuran"
-              type="number"
-              className="mt-2 w-full rounded-xl border-2 border-black/15 bg-white px-4 py-3 font-medium text-black outline-none transition-colors focus:border-black/40"
-              value={form.targetQuran}
-              onChange={(e) =>
-                updateField("targetQuran", Number(e.target.value))
-              }
-            />
+            <div className="flex items-center justify-between">
+              <label
+                htmlFor="targetQuran"
+                className="text-xs font-semibold uppercase tracking-wide text-gray-500"
+              >
+                Target halaman Quran harian
+              </label>
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                className="h-6 w-6"
+              >
+                <path
+                  d="M4 19V5C4 3.89543 4.89543 3 6 3H19V17H6C4.89543 17 4 17.8954 4 19ZM4 19C4 20.1046 4.89543 21 6 21H19"
+                  fill="#99F6E4"
+                  stroke="black"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M8 7H15M8 11H15"
+                  stroke="black"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
+            <div className="mt-2 flex h-12 items-stretch overflow-hidden rounded-xl border-2 border-black/15 bg-white py-1 pl-4 pr-4 transition-colors focus-within:border-black/40">
+              <input
+                id="targetQuran"
+                type="number"
+                className="h-full min-w-0 flex-1 bg-transparent pr-2 font-medium text-black outline-none"
+                value={form.targetQuran}
+                onChange={(e) =>
+                  updateField(
+                    "targetQuran",
+                    Math.max(0, Number(e.target.value)),
+                  )
+                }
+              />
+              <div className="flex shrink-0 items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() =>
+                    updateField(
+                      "targetQuran",
+                      Math.max(0, form.targetQuran - 1),
+                    )
+                  }
+                  className="flex h-full w-9 items-center justify-center rounded-lg bg-black text-xl font-bold text-white active:scale-95"
+                >
+                  -
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    updateField("targetQuran", form.targetQuran + 1)
+                  }
+                  className="flex h-full w-9 items-center justify-center rounded-lg bg-black text-xl font-bold text-white active:scale-95"
+                >
+                  +
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 

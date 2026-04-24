@@ -44,10 +44,7 @@ export default function BottomNav() {
                 className="absolute -top-6 left-1/2 -translate-x-1/2"
               >
                 <div className="grid h-14 w-14 place-items-center rounded-full border-2 border-black bg-white text-black transition-transform active:scale-95 shadow-md">
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="h-8 w-8 fill-black"
-                  >
+                  <svg viewBox="0 0 24 24" className="h-8 w-8 fill-black">
                     <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
                   </svg>
                 </div>

@@ -168,11 +168,11 @@ export const useTaskStore = create<TaskState>()(
       },
       getWeeklySedekah: () => {
         const now = dayjs();
-        let friday = now.day(5).hour(18).minute(0).second(0);
+        let friday = now.day(5).startOf("day");
         if (now.isBefore(friday)) friday = friday.subtract(1, "week");
         let total = 0;
         Object.values(get().days).forEach((d) => {
-          if (dayjs(d.date).isAfter(friday) && d.sedekah.done)
+          if (!dayjs(d.date).isBefore(friday, "day") && d.sedekah.done)
             total += d.sedekah.amount;
         });
         return total;

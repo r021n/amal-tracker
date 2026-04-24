@@ -81,8 +81,6 @@ export default function Calendar() {
       ? activeMonthStart.calendar("hijri").format("MMMM YYYY [H]")
       : activeMonthStart.format("MMMM YYYY");
 
-  const activeMonthTotal = activeMonthCount;
-
   return (
     <div className="rounded-[26px] border-2 border-black bg-stone-50 p-4 sm:p-5">
       <div className="flex items-start justify-between gap-3">
@@ -101,7 +99,7 @@ export default function Calendar() {
             >
               {perfectDays}{" "}
               <span className="text-xl font-semibold text-gray-600">
-                / {activeMonthTotal}
+                / {activeMonthCount}
               </span>
             </motion.p>
           </AnimatePresence>
@@ -111,7 +109,9 @@ export default function Calendar() {
           <button
             onClick={() => setMode("hijri")}
             className={`rounded-full px-3 py-1 text-xs font-semibold transition-all ${
-              mode === "hijri" ? "bg-black text-white" : "text-gray-500 hover:bg-stone-50"
+              mode === "hijri"
+                ? "bg-black text-white"
+                : "text-gray-500 hover:bg-stone-50"
             }`}
           >
             Hijriah
@@ -119,7 +119,9 @@ export default function Calendar() {
           <button
             onClick={() => setMode("gregory")}
             className={`rounded-full px-3 py-1 text-xs font-semibold transition-all ${
-              mode === "gregory" ? "bg-black text-white" : "text-gray-500 hover:bg-stone-50"
+              mode === "gregory"
+                ? "bg-black text-white"
+                : "text-gray-500 hover:bg-stone-50"
             }`}
           >
             Masehi

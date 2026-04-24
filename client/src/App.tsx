@@ -1,12 +1,22 @@
-import { Routes, Route, Navigate, Outlet } from "react-router";
+import { Routes, Route, Navigate, Outlet, useLocation } from "react-router";
+import { useEffect } from "react";
 import Home from "./pages/Home";
 import Leaderboard from "./pages/Leaderboard";
 import History from "./pages/History";
 import Profile from "./pages/Profile";
-import Task from "./pages/Task";
 import Login from "./pages/Login";
 import BottomNav from "./components/BottomNav";
 import { useUserStore } from "./store/useUserStore";
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
 
 function ProtectedRoute() {
   const password = useUserStore((s) => s.password);
@@ -22,6 +32,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-stone-100 pb-24">
+      <ScrollToTop />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
@@ -29,7 +40,6 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/history" element={<History />} />
-          <Route path="/task" element={<Task />} />
         </Route>
         <Route
           path="*"

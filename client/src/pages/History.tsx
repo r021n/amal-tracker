@@ -183,7 +183,7 @@ export default function History() {
                 </div>
                 <button
                   onClick={() => setSelected(null)}
-                  className="group flex h-10 w-10 items-center justify-center rounded-full border-2 border-black bg-white transition-all hover:bg-black hover:text-white active:scale-90"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-black bg-white transition-all hover:bg-black hover:text-white active:scale-90"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

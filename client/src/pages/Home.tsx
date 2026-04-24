@@ -214,7 +214,7 @@ export default function Home() {
                   return (
                     <div
                       key={item.key}
-                      className="group flex items-center justify-between rounded-2xl border-2 border-black bg-white p-3 transition-all hover:bg-stone-50"
+                      className="flex items-center justify-between rounded-2xl border-2 border-black bg-white p-3 transition-all hover:bg-stone-50"
                     >
                       <div className="flex items-center gap-3">
                         <div

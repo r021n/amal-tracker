@@ -5,6 +5,10 @@ import { useShallow } from "zustand/react/shallow";
 import { motion, AnimatePresence } from "motion/react";
 import Calendar from "../components/Calendar";
 import fireIcon from "../assets/home/fire.svg";
+import walletIcon from "../assets/home/wallet.svg";
+import bookIcon from "../assets/home/book.svg";
+
+
 
 type SholatKey = "s" | "d" | "a" | "m" | "i";
 
@@ -331,20 +335,7 @@ export default function Home() {
           <div className="relative z-10">
             <div className="flex items-start justify-between">
               <div className="rounded-xl border-2 border-black bg-white p-2.5">
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="#fbbf24"
-                  stroke="black"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4" />
-                  <path d="M4 6v12c0 1.1.9 2 2 2h14v-4" />
-                  <path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4Z" />
-                </svg>
+                <img src={walletIcon} alt="" className="h-[22px] w-[22px]" />
               </div>
               <div className="rounded-full border-2 border-black bg-white/90 px-2 py-0.5 text-[11px] font-black">
                 {Math.round(sedekahPercent)}%
@@ -381,19 +372,7 @@ export default function Home() {
           <div className="relative z-10">
             <div className="flex items-start justify-between">
               <div className="rounded-xl border-2 border-black bg-white p-2.5">
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="#38bdf8"
-                  stroke="black"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-                </svg>
+                <img src={bookIcon} alt="" className="h-[22px] w-[22px]" />
               </div>
               <div className="rounded-full border-2 border-black bg-white/90 px-2 py-0.5 text-[11px] font-black">
                 {Math.round(quranPercent)}%

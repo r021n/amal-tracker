@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import flashIcon from "../assets/leaderboard/flash.svg";
+import starIcon from "../assets/leaderboard/star.svg";
 
 const dummy = [
   { name: "Budi", streak: 38, score: 3200, avatar: "B" },
@@ -14,53 +16,25 @@ const dummy = [
   { name: "Joko", streak: 9, score: 1400, avatar: "J" },
 ].sort((a, b) => b.score - a.score);
 
-const ScoreIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    className="h-4 w-4"
-    stroke="currentColor"
-    strokeWidth="2.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-  </svg>
-);
-
-const StreakIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    className="h-3.5 w-3.5"
-    stroke="currentColor"
-    strokeWidth="2.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-  </svg>
-);
-
 export default function Leaderboard() {
   const [data, setData] = useState(dummy);
 
   // ==========================================================================
   // SIMULASI PERUBAHAN RANKING (HAPUS BAGIAN INI NANTI)
   // ==========================================================================
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setData((prev) => {
-        const newData = prev.map((user) => ({
-          ...user,
-          // Randomly change score slightly to trigger reorder
-          score: user.score + Math.floor(Math.random() * 200) - 50,
-        }));
-        return [...newData].sort((a, b) => b.score - a.score);
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setData((prev) => {
+  //       const newData = prev.map((user) => ({
+  //         ...user,
+  //         // Randomly change score slightly to trigger reorder
+  //         score: user.score + Math.floor(Math.random() * 200) - 50,
+  //       }));
+  //       return [...newData].sort((a, b) => b.score - a.score);
+  //     });
+  //   }, 1000);
+  //   return () => clearInterval(interval);
+  // }, []);
   // ==========================================================================
 
   const topThree = data.slice(0, 3);
@@ -111,7 +85,7 @@ export default function Leaderboard() {
                     {user.name}
                   </p>
                   <span className="mt-1 inline-flex items-center gap-1 rounded-full border-2 border-black bg-white px-2.5 py-1 text-[11px] font-semibold text-orange-500">
-                    <StreakIcon />
+                    <img src={flashIcon} alt="" className="h-3.5 w-3.5" />
                     {user.streak}
                   </span>
                 </div>
@@ -122,8 +96,8 @@ export default function Leaderboard() {
                   <span className="rounded-full border-2 border-black bg-white px-3 py-1 text-sm font-black">
                     #{rank}
                   </span>
-                  <div className="flex items-center gap-0.5 text-[10px] font-black uppercase">
-                    <ScoreIcon />
+                  <div className="flex items-center gap-1 text-[10px] font-black uppercase">
+                    <img src={starIcon} alt="" className="h-3 w-3" />
                     {user.score}
                   </div>
                 </motion.div>
@@ -167,13 +141,13 @@ export default function Leaderboard() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-base font-bold">{u.name}</p>
-                  <p className="flex items-center gap-1 text-xs font-medium text-orange-600">
-                    <StreakIcon />
+                  <p className="flex items-center gap-0.5 text-xs font-medium text-orange-600">
+                    <img src={flashIcon} alt="" className="h-3.5 w-3.5" />
                     {u.streak} hari beruntun
                   </p>
                 </div>
                 <span className="inline-flex items-center gap-1 rounded-full border-2 border-black bg-amber-200 px-3 py-1 text-sm font-black text-black">
-                  <ScoreIcon />
+                  <img src={starIcon} alt="" className="h-3 w-3" />
                   {u.score}
                 </span>
               </motion.div>

@@ -7,6 +7,12 @@ import Calendar from "../components/Calendar";
 import fireIcon from "../assets/home/fire.svg";
 import walletIcon from "../assets/home/wallet.svg";
 import bookIcon from "../assets/home/book.svg";
+import { CheckIcon } from "../assets/home/CheckIcon";
+import { CrossIcon } from "../assets/home/CrossIcon";
+import { ClockIcon } from "../assets/home/ClockIcon";
+import { ChevronIcon } from "../assets/home/ChevronIcon";
+import { CircularProgress } from "../assets/home/CircularProgress";
+
 
 
 
@@ -92,28 +98,7 @@ export default function Home() {
           </div>
 
           <div className="relative flex h-14 w-14 shrink-0 items-center justify-center">
-            <svg className="h-full w-full -rotate-90">
-              <circle
-                cx="28"
-                cy="28"
-                r="22"
-                stroke="black"
-                strokeWidth="5"
-                fill="white"
-              />
-              <circle
-                cx="28"
-                cy="28"
-                r="22"
-                stroke="#10b981"
-                strokeWidth="5"
-                fill="transparent"
-                strokeDasharray={2 * Math.PI * 22}
-                strokeDashoffset={2 * Math.PI * 22 * (1 - sholatDone / 5)}
-                strokeLinecap="round"
-                className="transition-all duration-1000 ease-in-out"
-              />
-            </svg>
+            <CircularProgress sholatDone={sholatDone} />
             <div className="absolute flex flex-col items-center justify-center leading-none">
               <span className="text-sm font-black">{sholatDone}</span>
               <span className="text-[8px] font-bold text-gray-400">/5</span>
@@ -149,31 +134,9 @@ export default function Home() {
                         }`}
                       >
                         {status === "done" ? (
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="#10b981"
-                            stroke="black"
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
+                          <CheckIcon />
                         ) : status === "halangan" ? (
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="#fbbf24"
-                            stroke="black"
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path d="M18 6L6 18M6 6l12 12" />
-                          </svg>
+                          <CrossIcon />
                         ) : (
                           <div className="h-1.5 w-1.5 rounded-full bg-gray-400" />
                         )}
@@ -189,18 +152,7 @@ export default function Home() {
                 onClick={() => setSholatExpanded(true)}
                 className="flex h-8 w-8 items-center justify-center rounded-lg border-2 border-black bg-white"
               >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="black"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="m6 9 6 6 6-6" />
-                </svg>
+                <ChevronIcon direction="down" />
               </button>
             </motion.div>
           ) : (
@@ -231,45 +183,11 @@ export default function Home() {
                           }`}
                         >
                           {status === "done" ? (
-                            <svg
-                              width="20"
-                              height="20"
-                              viewBox="0 0 24 24"
-                              fill="#10b981"
-                              stroke="black"
-                              strokeWidth="2.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
+                            <CheckIcon size={20} />
                           ) : status === "halangan" ? (
-                            <svg
-                              width="20"
-                              height="20"
-                              viewBox="0 0 24 24"
-                              fill="#fbbf24"
-                              stroke="black"
-                              strokeWidth="2.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="M18 6L6 18M6 6l12 12" />
-                            </svg>
+                            <CrossIcon size={20} />
                           ) : (
-                            <svg
-                              width="20"
-                              height="20"
-                              viewBox="0 0 24 24"
-                              fill="#f5f5f4"
-                              stroke="black"
-                              strokeWidth="2.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <circle cx="12" cy="12" r="10" />
-                              <path d="M12 6v6l4 2" />
-                            </svg>
+                            <ClockIcon size={20} />
                           )}
                         </div>
                         <div>
@@ -304,18 +222,7 @@ export default function Home() {
                     onClick={() => setSholatExpanded(false)}
                     className="flex h-10 w-10 items-center justify-center rounded-xl border-2 border-black bg-white"
                   >
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="black"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="m18 15-6-6-6 6" />
-                    </svg>
+                    <ChevronIcon direction="up" size={20} />
                   </button>
                 </div>
               </div>

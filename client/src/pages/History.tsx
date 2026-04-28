@@ -3,6 +3,11 @@ import { useTaskStore } from "../store/useTaskStore";
 import { useShallow } from "zustand/react/shallow";
 import dayjs from "../lib/dayjs";
 import { motion, AnimatePresence } from "motion/react";
+import { CalendarIcon } from "../assets/history/CalendarIcon";
+import { SholatIcon } from "../assets/history/SholatIcon";
+import { QuranIcon } from "../assets/history/QuranIcon";
+import { SedekahIcon } from "../assets/history/SedekahIcon";
+import { CloseIcon } from "../assets/history/CloseIcon";
 
 const sholatLabel: Record<string, string> = {
   s: "Subuh",
@@ -68,75 +73,40 @@ export default function History() {
               }`}
             >
               <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-lg font-black leading-none text-black">
-                    {dayjs(date).format("DD MMM YYYY")}
-                  </p>
-                  <p className="mt-1 text-xs font-bold text-gray-400">
-                    {dayjs(date).format("dddd").toUpperCase()}
-                  </p>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+                    <CalendarIcon />
+                  </div>
+                  <div>
+                    <p className="text-lg font-black leading-none text-black">
+                      {dayjs(date).format("DD MMM YYYY")}
+                    </p>
+                    <p className="mt-1 text-xs font-bold text-gray-400">
+                      {dayjs(date).format("dddd").toUpperCase()}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 rounded-full border-2 border-black bg-stone-100 px-3 py-1 text-xs font-black text-black">
+                <div className="flex items-center gap-2 rounded-full border-2 border-stone-400 bg-stone-50 px-3 py-1 text-xs font-black text-stone-700">
                   <span>{done}</span>
-                  <span className="text-[10px] uppercase tracking-wider text-gray-500">
+                  <span className="text-[10px] uppercase tracking-wider text-stone-600">
                     Amal
                   </span>
                 </div>
               </div>
 
               <div className="mt-4 flex flex-wrap gap-3">
-                <div className="flex items-center gap-2 rounded-xl border-2 border-black bg-emerald-300 px-2.5 py-1.5">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M22 20v-4a2 2 0 0 0-2-2h-2V8l-4-4-4 4v6h-2a2 2 0 0 0-2 2v4" />
-                    <path d="M6 18h4" />
-                    <path d="M14 18h4" />
-                    <path d="M12 11V7" />
-                  </svg>
+                <div className="flex items-center gap-2 rounded-xl border-2 border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-emerald-700">
+                  <SholatIcon />
                   <span className="text-[11px] font-black">{sholatDone}/5</span>
                 </div>
-                <div className="flex items-center gap-2 rounded-xl border-2 border-black bg-sky-300 px-2.5 py-1.5">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-                  </svg>
+                <div className="flex items-center gap-2 rounded-xl border-2 border-sky-200 bg-sky-50 px-2.5 py-1.5 text-sky-700">
+                  <QuranIcon />
                   <span className="text-[11px] font-black">
                     {d.quran.pages}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 rounded-xl border-2 border-black bg-orange-300 px-2.5 py-1.5">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect width="20" height="14" x="2" y="5" rx="2" />
-                    <line x1="2" x2="22" y1="10" y2="10" />
-                    <path d="M7 15h.01" />
-                    <path d="M11 15h.01" />
-                  </svg>
+                <div className="flex items-center gap-2 rounded-xl border-2 border-orange-200 bg-orange-50 px-2.5 py-1.5 text-orange-700">
+                  <SedekahIcon />
                   <span className="text-[11px] font-black">
                     {d.sedekah.amount >= 1000
                       ? `${(d.sedekah.amount / 1000).toFixed(0)}k`
@@ -185,20 +155,7 @@ export default function History() {
                   onClick={() => setSelected(null)}
                   className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-black bg-white transition-all hover:bg-black hover:text-white active:scale-90"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M18 6 6 18" />
-                    <path d="m6 6 12 12" />
-                  </svg>
+                  <CloseIcon />
                 </button>
               </div>
 

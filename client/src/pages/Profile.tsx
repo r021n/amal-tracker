@@ -2,6 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
 import { useUserStore } from "../store/useUserStore";
+import { UserIcon } from "../assets/profile/UserIcon";
+import { LockIcon } from "../assets/profile/LockIcon";
+import { GenderIcon } from "../assets/profile/GenderIcon";
+import { ChevronDownIcon } from "../assets/profile/ChevronDownIcon";
 
 export default function Profile() {
   const {
@@ -72,29 +76,7 @@ export default function Profile() {
             >
               Nama
             </label>
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              className="h-6 w-6"
-            >
-              <circle
-                cx="12"
-                cy="8"
-                r="4"
-                fill="#BAE6FD"
-                stroke="black"
-                strokeWidth="2"
-              />
-              <path
-                d="M4 20C4 16.6863 7.58172 14 12 14C16.4183 14 20 16.6863 20 20"
-                fill="#BAE6FD"
-                stroke="black"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
+            <UserIcon className="h-6 w-6" />
           </div>
           <input
             id="name"
@@ -118,31 +100,7 @@ export default function Profile() {
                 Ganti sistem keamanan dari PIN ke password akun.
               </p>
             </div>
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              className="h-7 w-7"
-            >
-              <rect
-                x="5"
-                y="11"
-                width="14"
-                height="10"
-                rx="2"
-                fill="#FEF08A"
-                stroke="black"
-                strokeWidth="2"
-              />
-              <path
-                d="M8 11V7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7V11"
-                stroke="black"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-              <circle cx="12" cy="16" r="1.5" fill="black" />
-            </svg>
+            <LockIcon className="h-7 w-7" />
           </div>
 
           <input
@@ -164,30 +122,7 @@ export default function Profile() {
             >
               Gender
             </label>
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              className="h-6 w-6"
-            >
-              <circle
-                cx="9"
-                cy="9"
-                r="5"
-                fill="#FBCFE8"
-                stroke="black"
-                strokeWidth="2"
-              />
-              <circle
-                cx="15"
-                cy="15"
-                r="5"
-                fill="#A5B4FC"
-                stroke="black"
-                strokeWidth="2"
-              />
-            </svg>
+            <GenderIcon className="h-6 w-6" />
           </div>
           <div className="relative mt-2">
             <button
@@ -202,19 +137,9 @@ export default function Profile() {
                     ? "Perempuan"
                     : "Pilih gender"}
               </span>
-              <svg
+              <ChevronDownIcon
                 className={`h-4 w-4 text-black/50 transition-transform ${isGenderOpen ? "rotate-180" : ""}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="3"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
+              />
             </button>
 
             <AnimatePresence>
@@ -272,37 +197,13 @@ export default function Profile() {
           </div>
 
           <div className="rounded-2xl border-2 border-black/10 bg-stone-50 p-4">
-            <div className="flex items-center justify-between">
-              <label
-                htmlFor="targetSedekah"
-                className="text-xs font-semibold uppercase tracking-wide text-gray-500"
-              >
-                Target sedekah mingguan
-              </label>
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                className="h-6 w-6"
-              >
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="9"
-                  fill="#BBF7D0"
-                  stroke="black"
-                  strokeWidth="2"
-                />
-                <path
-                  d="M12 7V17M9 10L12 7L15 10"
-                  stroke="black"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
+            <label
+              htmlFor="targetSedekah"
+              className="text-xs font-semibold uppercase tracking-wide text-gray-500"
+            >
+              Target sedekah mingguan
+            </label>
+
             <div className="mt-2 flex h-12 items-stretch overflow-hidden rounded-xl border-2 border-black/15 bg-white py-1 pl-4 pr-4 transition-colors focus-within:border-black/40">
               <input
                 id="targetSedekah"
@@ -343,36 +244,13 @@ export default function Profile() {
           </div>
 
           <div className="rounded-2xl border-2 border-black/10 bg-stone-50 p-4">
-            <div className="flex items-center justify-between">
-              <label
-                htmlFor="targetQuran"
-                className="text-xs font-semibold uppercase tracking-wide text-gray-500"
-              >
-                Target halaman Quran harian
-              </label>
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                className="h-6 w-6"
-              >
-                <path
-                  d="M4 19V5C4 3.89543 4.89543 3 6 3H19V17H6C4.89543 17 4 17.8954 4 19ZM4 19C4 20.1046 4.89543 21 6 21H19"
-                  fill="#99F6E4"
-                  stroke="black"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M8 7H15M8 11H15"
-                  stroke="black"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </div>
+            <label
+              htmlFor="targetQuran"
+              className="text-xs font-semibold uppercase tracking-wide text-gray-500"
+            >
+              Target halaman Quran harian
+            </label>
+
             <div className="mt-2 flex h-12 items-stretch overflow-hidden rounded-xl border-2 border-black/15 bg-white py-1 pl-4 pr-4 transition-colors focus-within:border-black/40">
               <input
                 id="targetQuran"

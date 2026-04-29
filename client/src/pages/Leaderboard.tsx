@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useUserStore } from "../store/useUserStore";
 import flashIcon from "../assets/leaderboard/flash.svg";
 import starIcon from "../assets/leaderboard/star.svg";
 
@@ -17,25 +17,20 @@ const dummy = [
 ].sort((a, b) => b.score - a.score);
 
 export default function Leaderboard() {
-  const [data, setData] = useState(dummy);
-
-  // ==========================================================================
-  // SIMULASI PERUBAHAN RANKING (HAPUS BAGIAN INI NANTI)
-  // ==========================================================================
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setData((prev) => {
-  //       const newData = prev.map((user) => ({
-  //         ...user,
-  //         // Randomly change score slightly to trigger reorder
-  //         score: user.score + Math.floor(Math.random() * 200) - 50,
-  //       }));
-  //       return [...newData].sort((a, b) => b.score - a.score);
-  //     });
-  //   }, 1000);
-  //   return () => clearInterval(interval);
-  // }, []);
-  // ==========================================================================
+  const name = useUserStore((state) => state.name);
+  const username = useUserStore((state) => state.username);
+  const streak = useUserStore((state) => state.streak);
+  const score = useUserStore((state) => state.score);
+  const displayName = name || username || "Kamu";
+  const data = [
+    ...dummy,
+    {
+      name: displayName,
+      streak,
+      score,
+      avatar: displayName.slice(0, 1).toUpperCase(),
+    },
+  ].sort((a, b) => b.score - a.score);
 
   const topThree = data.slice(0, 3);
   const others = data.slice(3);
@@ -68,7 +63,7 @@ export default function Leaderboard() {
         <div className="grid grid-cols-3 items-end gap-3">
           {[topThree[1], topThree[0], topThree[2]].map((user) => {
             if (!user) return null;
-            const rank = data.findIndex((u) => u.name === user.name) + 1;
+            const rank = data.indexOf(user) + 1;
 
             return (
               <motion.div
@@ -118,13 +113,13 @@ export default function Leaderboard() {
             </p>
           </div>
           <span className="rounded-full border-2 border-black bg-white px-3 py-1 text-xs font-semibold">
-            {dummy.length} peserta
+            {data.length} peserta
           </span>
         </div>
 
         <div className="mt-4 space-y-3">
           {others.map((u) => {
-            const rank = data.findIndex((item) => item.name === u.name) + 1;
+            const rank = data.indexOf(u) + 1;
 
             return (
               <motion.div

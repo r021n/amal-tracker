@@ -32,7 +32,11 @@ interface TaskState {
   toggleCustom: (id: string) => void;
   removeCustom: (id: string) => void;
   getWeeklySedekah: () => number;
+  getTotalScore: () => number;
+  syncUserScore: () => void;
 }
+
+const TASK_SCORE = 10;
 
 const createToday = (date: string): TaskDay => ({
   date,
@@ -43,6 +47,22 @@ const createToday = (date: string): TaskDay => ({
   sedekah: { amount: 0, done: false },
   custom: [],
 });
+
+const getTaskDayScore = (day: TaskDay) => {
+  const sholatScore =
+    Object.values(day.sholat).filter((status) => status === "done").length *
+    TASK_SCORE;
+  const dzikirScore =
+    (Number(day.dzikirPagi) + Number(day.dzikirPetang)) * TASK_SCORE;
+  const quranScore = day.quran.done ? day.quran.pages * TASK_SCORE : 0;
+  const sedekahScore = day.sedekah.done
+    ? Math.floor(day.sedekah.amount / 1000) * TASK_SCORE
+    : 0;
+  const customScore =
+    day.custom.filter((item) => item.done).length * TASK_SCORE;
+
+  return sholatScore + dzikirScore + quranScore + sedekahScore + customScore;
+};
 
 export const useTaskStore = create<TaskState>()(
   persist(
@@ -66,14 +86,18 @@ export const useTaskStore = create<TaskState>()(
           cur === "none" ? "done" : cur === "done" ? "halangan" : "none";
         const updated = { ...day, sholat: { ...day.sholat, [key]: next } };
         set({ days: { ...get().days, [today]: updated } });
-        if (next === "done") useUserStore.getState().tryIncrementStreak();
+        const scoreDelta = getTaskDayScore(updated) - getTaskDayScore(day);
+        if (scoreDelta !== 0) useUserStore.getState().addScore(scoreDelta);
+        if (scoreDelta > 0) useUserStore.getState().tryIncrementStreak();
       },
       setSholatStatus: (key, status) => {
         const today = dayjs().format("YYYY-MM-DD");
         const day = get().getToday();
         const updated = { ...day, sholat: { ...day.sholat, [key]: status } };
         set({ days: { ...get().days, [today]: updated } });
-        if (status === "done") useUserStore.getState().tryIncrementStreak();
+        const scoreDelta = getTaskDayScore(updated) - getTaskDayScore(day);
+        if (scoreDelta !== 0) useUserStore.getState().addScore(scoreDelta);
+        if (scoreDelta > 0) useUserStore.getState().tryIncrementStreak();
       },
       setAllSholat: (status) => {
         const today = dayjs().format("YYYY-MM-DD");
@@ -83,7 +107,9 @@ export const useTaskStore = create<TaskState>()(
           sholat: { s: status, d: status, a: status, m: status, i: status },
         };
         set({ days: { ...get().days, [today]: updated } });
-        if (status === "done") useUserStore.getState().tryIncrementStreak();
+        const scoreDelta = getTaskDayScore(updated) - getTaskDayScore(day);
+        if (scoreDelta !== 0) useUserStore.getState().addScore(scoreDelta);
+        if (scoreDelta > 0) useUserStore.getState().tryIncrementStreak();
       },
       toggleDzikir: (type) => {
         const today = dayjs().format("YYYY-MM-DD");
@@ -91,20 +117,27 @@ export const useTaskStore = create<TaskState>()(
         const key = type === "pagi" ? "dzikirPagi" : "dzikirPetang";
         const updated = { ...day, [key]: !day[key] };
         set({ days: { ...get().days, [today]: updated } });
-        if (updated[key]) useUserStore.getState().tryIncrementStreak();
+        const scoreDelta = getTaskDayScore(updated) - getTaskDayScore(day);
+        if (scoreDelta !== 0) useUserStore.getState().addScore(scoreDelta);
+        if (scoreDelta > 0) useUserStore.getState().tryIncrementStreak();
       },
       setAllDzikir: (done) => {
         const today = dayjs().format("YYYY-MM-DD");
         const day = get().getToday();
         const updated = { ...day, dzikirPagi: done, dzikirPetang: done };
         set({ days: { ...get().days, [today]: updated } });
-        if (done) useUserStore.getState().tryIncrementStreak();
+        const scoreDelta = getTaskDayScore(updated) - getTaskDayScore(day);
+        if (scoreDelta !== 0) useUserStore.getState().addScore(scoreDelta);
+        if (scoreDelta > 0) useUserStore.getState().tryIncrementStreak();
       },
       setQuranPages: (pages) => {
         const today = dayjs().format("YYYY-MM-DD");
         const day = get().getToday();
         const updated = { ...day, quran: { ...day.quran, pages } };
         set({ days: { ...get().days, [today]: updated } });
+        const scoreDelta = getTaskDayScore(updated) - getTaskDayScore(day);
+        if (scoreDelta !== 0) useUserStore.getState().addScore(scoreDelta);
+        if (scoreDelta > 0) useUserStore.getState().tryIncrementStreak();
       },
       toggleQuran: () => {
         const today = dayjs().format("YYYY-MM-DD");
@@ -115,13 +148,18 @@ export const useTaskStore = create<TaskState>()(
           quran: { ...day.quran, done: !day.quran.done },
         };
         set({ days: { ...get().days, [today]: updated } });
-        if (updated.quran.done) useUserStore.getState().tryIncrementStreak();
+        const scoreDelta = getTaskDayScore(updated) - getTaskDayScore(day);
+        if (scoreDelta !== 0) useUserStore.getState().addScore(scoreDelta);
+        if (scoreDelta > 0) useUserStore.getState().tryIncrementStreak();
       },
       setSedekahAmount: (amount) => {
         const today = dayjs().format("YYYY-MM-DD");
         const day = get().getToday();
         const updated = { ...day, sedekah: { ...day.sedekah, amount } };
         set({ days: { ...get().days, [today]: updated } });
+        const scoreDelta = getTaskDayScore(updated) - getTaskDayScore(day);
+        if (scoreDelta !== 0) useUserStore.getState().addScore(scoreDelta);
+        if (scoreDelta > 0) useUserStore.getState().tryIncrementStreak();
       },
       toggleSedekah: () => {
         const today = dayjs().format("YYYY-MM-DD");
@@ -132,7 +170,9 @@ export const useTaskStore = create<TaskState>()(
           sedekah: { ...day.sedekah, done: !day.sedekah.done },
         };
         set({ days: { ...get().days, [today]: updated } });
-        if (updated.sedekah.done) useUserStore.getState().tryIncrementStreak();
+        const scoreDelta = getTaskDayScore(updated) - getTaskDayScore(day);
+        if (scoreDelta !== 0) useUserStore.getState().addScore(scoreDelta);
+        if (scoreDelta > 0) useUserStore.getState().tryIncrementStreak();
       },
       addCustom: (name) => {
         const today = dayjs().format("YYYY-MM-DD");
@@ -154,8 +194,9 @@ export const useTaskStore = create<TaskState>()(
           ),
         };
         set({ days: { ...get().days, [today]: updated } });
-        if (updated.custom.some((c) => c.done))
-          useUserStore.getState().tryIncrementStreak();
+        const scoreDelta = getTaskDayScore(updated) - getTaskDayScore(day);
+        if (scoreDelta !== 0) useUserStore.getState().addScore(scoreDelta);
+        if (scoreDelta > 0) useUserStore.getState().tryIncrementStreak();
       },
       removeCustom: (id) => {
         const today = dayjs().format("YYYY-MM-DD");
@@ -165,6 +206,8 @@ export const useTaskStore = create<TaskState>()(
           custom: day.custom.filter((c) => c.id !== id),
         };
         set({ days: { ...get().days, [today]: updated } });
+        const scoreDelta = getTaskDayScore(updated) - getTaskDayScore(day);
+        if (scoreDelta !== 0) useUserStore.getState().addScore(scoreDelta);
       },
       getWeeklySedekah: () => {
         const now = dayjs();
@@ -176,6 +219,15 @@ export const useTaskStore = create<TaskState>()(
             total += d.sedekah.amount;
         });
         return total;
+      },
+      getTotalScore: () => {
+        return Object.values(get().days).reduce(
+          (total, day) => total + getTaskDayScore(day),
+          0,
+        );
+      },
+      syncUserScore: () => {
+        useUserStore.getState().setScore(get().getTotalScore());
       },
     }),
     { name: "amal-tasks" },

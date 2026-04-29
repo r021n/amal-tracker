@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import BottomNav from "./components/BottomNav";
 import { useUserStore } from "./store/useUserStore";
+import { useTaskStore } from "./store/useTaskStore";
 
 const pageVariants = {
   initial: { opacity: 0 },
@@ -48,6 +49,10 @@ export default function App() {
   const location = useLocation();
 
   const isAuthPage = ["/login", "/register"].includes(location.pathname);
+
+  useEffect(() => {
+    useTaskStore.getState().syncUserScore();
+  }, []);
 
   return (
     <div className="min-h-screen bg-stone-100 pb-24 overflow-x-hidden">
@@ -118,4 +123,3 @@ export default function App() {
     </div>
   );
 }
-

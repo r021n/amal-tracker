@@ -11,11 +11,14 @@ interface UserState {
   targetQuran: number;
   isAuthenticated: boolean;
   streak: number;
+  score: number;
   lastStreakDate: string;
   register: (username: string, password: string) => void;
   login: (username: string, password: string) => boolean;
   logout: () => void;
   updateProfile: (data: Partial<UserProfileFields>) => void;
+  addScore: (amount: number) => void;
+  setScore: (score: number) => void;
   tryIncrementStreak: () => void;
 }
 
@@ -35,6 +38,7 @@ type PersistedUserState = Partial<
     | "targetQuran"
     | "isAuthenticated"
     | "streak"
+    | "score"
     | "lastStreakDate"
   >
 > & {
@@ -52,6 +56,7 @@ export const useUserStore = create<UserState>()(
       targetQuran: 2,
       isAuthenticated: false,
       streak: 0,
+      score: 0,
       lastStreakDate: "",
       register: (username, password) => {
         set({ username, password, isAuthenticated: true });
@@ -67,6 +72,12 @@ export const useUserStore = create<UserState>()(
       },
       logout: () => set({ isAuthenticated: false }),
       updateProfile: (data) => set({ ...data }),
+      addScore: (amount) => {
+        set((state) => ({ score: Math.max(0, state.score + amount) }));
+      },
+      setScore: (score) => {
+        set({ score: Math.max(0, score) });
+      },
       tryIncrementStreak: () => {
         const today = dayjs().format("YYYY-MM-DD");
         const { lastStreakDate, streak } = get();
@@ -87,6 +98,7 @@ export const useUserStore = create<UserState>()(
           ...rest,
           username: state.username ?? "",
           password: state.password ?? pin ?? "",
+          score: state.score ?? 0,
           isAuthenticated: false,
         };
       },

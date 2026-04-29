@@ -22,6 +22,7 @@ export default function Home() {
   const [isSholatExpanded, setSholatExpanded] = useState(false);
   const name = useUserStore((s) => s.name);
   const streak = useUserStore((s) => s.streak);
+  const score = useUserStore((s) => s.score);
   const targetSedekah = useUserStore((s) => s.targetSedekah);
   const targetQuran = useUserStore((s) => s.targetQuran);
   const today = useTaskStore(useShallow((s) => s.getToday()));
@@ -69,6 +70,9 @@ export default function Home() {
             </p>
             <p className="text-[9px] font-black uppercase tracking-widest text-gray-400">
               Days
+            </p>
+            <p className="mt-1 rounded-full border-2 border-black bg-white px-2 py-0.5 text-[10px] font-black leading-none">
+              {score} pts
             </p>
           </div>
         </div>

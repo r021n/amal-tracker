@@ -6,9 +6,9 @@ import Leaderboard from "./pages/Leaderboard";
 import History from "./pages/History";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import BottomNav from "./components/BottomNav";
 import { useUserStore } from "./store/useUserStore";
-
 
 const pageVariants = {
   initial: { opacity: 0 },
@@ -35,22 +35,32 @@ const PageTransition = ({ children }: { children: React.ReactNode }) => {
 };
 
 function ProtectedRoute() {
-  const password = useUserStore((s) => s.password);
+  const username = useUserStore((s) => s.username);
   const isAuthenticated = useUserStore((s) => s.isAuthenticated);
-  if (!password) return <Navigate to="/profile" replace />;
+  if (!username) return <Navigate to="/register" replace />;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   return <Outlet />;
 }
 
 export default function App() {
-  const password = useUserStore((s) => s.password);
+  const username = useUserStore((s) => s.username);
   const isAuthenticated = useUserStore((s) => s.isAuthenticated);
   const location = useLocation();
+
+  const isAuthPage = ["/login", "/register"].includes(location.pathname);
 
   return (
     <div className="min-h-screen bg-stone-100 pb-24 overflow-x-hidden">
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
+          <Route
+            path="/register"
+            element={
+              <PageTransition>
+                <Register />
+              </PageTransition>
+            }
+          />
           <Route
             path="/login"
             element={
@@ -59,15 +69,15 @@ export default function App() {
               </PageTransition>
             }
           />
-          <Route
-            path="/profile"
-            element={
-              <PageTransition>
-                <Profile />
-              </PageTransition>
-            }
-          />
           <Route element={<ProtectedRoute />}>
+            <Route
+              path="/profile"
+              element={
+                <PageTransition>
+                  <Profile />
+                </PageTransition>
+              }
+            />
             <Route
               path="/"
               element={
@@ -97,14 +107,14 @@ export default function App() {
             path="*"
             element={
               <Navigate
-                to={password && isAuthenticated ? "/" : "/login"}
+                to={username && isAuthenticated ? "/" : (username ? "/login" : "/register")}
                 replace
               />
             }
           />
         </Routes>
       </AnimatePresence>
-      <BottomNav />
+      {!isAuthPage && <BottomNav />}
     </div>
   );
 }

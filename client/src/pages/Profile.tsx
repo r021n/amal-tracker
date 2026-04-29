@@ -16,7 +16,6 @@ export default function Profile() {
     targetQuran,
     updateProfile,
     logout,
-    isAuthenticated,
   } = useUserStore();
   const [isGenderOpen, setIsGenderOpen] = useState(false);
   const [form, setForm] = useState({
@@ -34,11 +33,6 @@ export default function Profile() {
     updateProfile(form);
     if (passwordChanged) {
       logout();
-      navigate(form.password ? "/login" : "/");
-      return;
-    }
-
-    if (!isAuthenticated && form.password) {
       navigate("/login");
       return;
     }
@@ -74,14 +68,14 @@ export default function Profile() {
               htmlFor="name"
               className="text-xs font-semibold uppercase tracking-wide text-gray-500"
             >
-              Nama
+              Nama Panggilan
             </label>
             <UserIcon className="h-6 w-6" />
           </div>
           <input
             id="name"
             className="mt-2 w-full rounded-xl border-2 border-black/20 bg-stone-50 px-4 py-3 font-medium text-black outline-none transition-colors focus:border-black/50"
-            placeholder="Nama panggilan"
+            placeholder="Masukkan nama panggilan"
             value={form.name}
             onChange={(e) => updateField("name", e.target.value)}
           />
@@ -97,7 +91,7 @@ export default function Profile() {
                 Password
               </label>
               <p className="mt-1 text-xs text-gray-500">
-                Ganti sistem keamanan dari PIN ke password akun.
+                Ubah password akun Anda untuk menjaga keamanan.
               </p>
             </div>
             <LockIcon className="h-7 w-7" />

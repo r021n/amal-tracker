@@ -4,6 +4,7 @@ import dayjs from "../lib/dayjs";
 
 interface UserState {
   name: string;
+  username: string;
   password: string;
   gender: "" | "L" | "P";
   targetSedekah: number;
@@ -11,29 +12,40 @@ interface UserState {
   isAuthenticated: boolean;
   streak: number;
   lastStreakDate: string;
-  login: (password: string) => boolean;
+  register: (username: string, password: string) => void;
+  login: (username: string, password: string) => boolean;
   logout: () => void;
-  updateProfile: (
-    data: Partial<
-      Pick<
-        UserState,
-        "name" | "password" | "gender" | "targetSedekah" | "targetQuran"
-      >
-    >,
-  ) => void;
+  updateProfile: (data: Partial<UserProfileFields>) => void;
   tryIncrementStreak: () => void;
 }
 
-type PersistedUserState = Partial<
-  UserState & {
-    pin?: string;
-  }
+type UserProfileFields = Pick<
+  UserState,
+  "name" | "password" | "gender" | "targetSedekah" | "targetQuran"
 >;
+
+type PersistedUserState = Partial<
+  Pick<
+    UserState,
+    | "name"
+    | "username"
+    | "password"
+    | "gender"
+    | "targetSedekah"
+    | "targetQuran"
+    | "isAuthenticated"
+    | "streak"
+    | "lastStreakDate"
+  >
+> & {
+  pin?: string;
+};
 
 export const useUserStore = create<UserState>()(
   persist(
     (set, get) => ({
       name: "",
+      username: "",
       password: "",
       gender: "",
       targetSedekah: 50000,
@@ -41,8 +53,15 @@ export const useUserStore = create<UserState>()(
       isAuthenticated: false,
       streak: 0,
       lastStreakDate: "",
-      login: (password) => {
-        const ok = get().password !== "" && get().password === password;
+      register: (username, password) => {
+        set({ username, password, isAuthenticated: true });
+      },
+      login: (username, password) => {
+        const ok =
+          get().username !== "" &&
+          get().password !== "" &&
+          get().username === username &&
+          get().password === password;
         if (ok) set({ isAuthenticated: true });
         return ok;
       },
@@ -59,13 +78,15 @@ export const useUserStore = create<UserState>()(
     }),
     {
       name: "amal-user",
-      version: 2,
+      version: 3,
       migrate: (persistedState) => {
         const state = (persistedState ?? {}) as PersistedUserState;
+        const { pin, ...rest } = state;
 
         return {
-          ...state,
-          password: state.password ?? state.pin ?? "",
+          ...rest,
+          username: state.username ?? "",
+          password: state.password ?? pin ?? "",
           isAuthenticated: false,
         };
       },

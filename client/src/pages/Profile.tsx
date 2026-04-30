@@ -8,19 +8,12 @@ import { GenderIcon } from "../assets/profile/GenderIcon";
 import { ChevronDownIcon } from "../assets/profile/ChevronDownIcon";
 
 export default function Profile() {
-  const {
-    name,
-    password,
-    gender,
-    targetSedekah,
-    targetQuran,
-    updateProfile,
-    logout,
-  } = useUserStore();
+  const { name, gender, targetSedekah, targetQuran, updateProfile, logout } =
+    useUserStore();
   const [isGenderOpen, setIsGenderOpen] = useState(false);
   const [form, setForm] = useState({
     name,
-    password,
+    password: "",
     gender,
     targetSedekah,
     targetQuran,
@@ -29,8 +22,16 @@ export default function Profile() {
 
   const save = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const passwordChanged = form.password !== password;
-    updateProfile(form);
+    const passwordChanged = form.password.trim() !== "";
+
+    // Only send password if it was changed
+    const payload = { ...form };
+    if (!passwordChanged) {
+      delete payload.password;
+    }
+
+    updateProfile(payload);
+
     if (passwordChanged) {
       logout();
       navigate("/login");

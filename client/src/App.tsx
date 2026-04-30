@@ -46,13 +46,18 @@ function ProtectedRoute() {
 export default function App() {
   const username = useUserStore((s) => s.username);
   const isAuthenticated = useUserStore((s) => s.isAuthenticated);
+  const fetchMe = useUserStore((s) => s.fetchMe);
+  const fetchToday = useTaskStore((s) => s.fetchToday);
   const location = useLocation();
 
-  const isAuthPage = ["/login", "/register"].includes(location.pathname);
-
   useEffect(() => {
-    useTaskStore.getState().syncUserScore();
-  }, []);
+    if (isAuthenticated) {
+      fetchMe();
+      fetchToday();
+    }
+  }, [isAuthenticated, fetchMe, fetchToday]);
+
+  const isAuthPage = ["/login", "/register"].includes(location.pathname);
 
   return (
     <div className="min-h-screen bg-stone-100 pb-24 overflow-x-hidden">
@@ -112,7 +117,13 @@ export default function App() {
             path="*"
             element={
               <Navigate
-                to={username && isAuthenticated ? "/" : (username ? "/login" : "/register")}
+                to={
+                  username && isAuthenticated
+                    ? "/"
+                    : username
+                      ? "/login"
+                      : "/register"
+                }
                 replace
               />
             }

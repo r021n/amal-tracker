@@ -9,20 +9,22 @@ export default function Login() {
 
   const login = useUserStore((s) => s.login);
   const isAuthenticated = useUserStore((s) => s.isAuthenticated);
-  const usernameStored = useUserStore((s) => s.username);
 
   const navigate = useNavigate();
 
-  if (!usernameStored) return <Navigate to="/register" replace />;
   if (isAuthenticated) return <Navigate to="/" replace />;
 
-  const submit = (e: React.SyntheticEvent) => {
+  const submit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
-    const ok = login(username.trim(), password.trim());
-    if (ok) {
-      navigate("/", { replace: true });
-    } else {
-      setError("Username atau password salah");
+    try {
+      const ok = await login(username.trim(), password.trim());
+      if (ok) {
+        navigate("/", { replace: true });
+      } else {
+        setError("Username atau password salah");
+      }
+    } catch {
+      setError("Terjadi kesalahan pada server");
     }
   };
 
@@ -39,7 +41,8 @@ export default function Login() {
             </p>
             <h1 className="mt-2 text-3xl font-black leading-none">Masuk</h1>
             <p className="mt-2 text-sm text-gray-600">
-              Masukkan username dan password untuk lanjut ke tracker ibadah harianmu.
+              Masukkan username dan password untuk lanjut ke tracker ibadah
+              harianmu.
             </p>
           </div>
 
@@ -89,10 +92,21 @@ export default function Login() {
 
             <button
               type="submit"
-              className="w-full rounded-2xl border-2 border-black bg-black px-4 py-3 text-base font-bold text-white"
+              className="w-full rounded-2xl border-2 border-black bg-black px-4 py-3 text-base font-bold text-white transition-transform active:scale-95"
             >
               Masuk Sekarang
             </button>
+
+            <p className="mt-4 text-center text-sm font-medium text-gray-600">
+              Belum punya akun?{" "}
+              <button
+                type="button"
+                onClick={() => navigate("/register")}
+                className="font-bold text-black underline underline-offset-4 outline-none hover:text-gray-700"
+              >
+                Daftar
+              </button>
+            </p>
           </div>
         </form>
       </div>

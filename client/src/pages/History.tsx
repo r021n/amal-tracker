@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTaskStore } from "../store/useTaskStore";
 import { useShallow } from "zustand/react/shallow";
 import dayjs from "../lib/dayjs";
@@ -19,7 +19,13 @@ const sholatLabel: Record<string, string> = {
 
 export default function History() {
   const days = useTaskStore(useShallow((s) => s.days));
+  const fetchHistory = useTaskStore((s) => s.fetchHistory);
   const [selected, setSelected] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchHistory();
+  }, [fetchHistory]);
+
   const sorted = Object.keys(days).sort((a, b) => b.localeCompare(a));
   const detail = selected ? days[selected] : null;
 

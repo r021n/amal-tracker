@@ -9,15 +9,13 @@ export default function Register() {
   const [error, setError] = useState("");
 
   const register = useUserStore((s) => s.register);
-  const usernameStored = useUserStore((s) => s.username);
   const isAuthenticated = useUserStore((s) => s.isAuthenticated);
 
   const navigate = useNavigate();
 
-  if (usernameStored && isAuthenticated) return <Navigate to="/" replace />;
-  if (usernameStored && !isAuthenticated) return <Navigate to="/login" replace />;
+  if (isAuthenticated) return <Navigate to="/" replace />;
 
-  const submit = (e: React.SyntheticEvent) => {
+  const submit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (!username.trim() || !password.trim()) {
       setError("Username dan password tidak boleh kosong");
@@ -27,8 +25,16 @@ export default function Register() {
       setError("Konfirmasi password tidak cocok");
       return;
     }
-    register(username.trim(), password.trim());
-    navigate("/", { replace: true });
+    try {
+      await register(username.trim(), password.trim());
+      navigate("/", { replace: true });
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || "Gagal mendaftar");
+      } else {
+        setError("Gagal mendaftar");
+      }
+    }
   };
 
   return (
@@ -45,7 +51,10 @@ export default function Register() {
         </p>
       </div>
 
-      <form onSubmit={submit} className="rounded-[26px] border-2 border-black bg-stone-50 p-5 space-y-4">
+      <form
+        onSubmit={submit}
+        className="rounded-[26px] border-2 border-black bg-stone-50 p-5 space-y-4"
+      >
         <div className="rounded-2xl border-2 border-black bg-white p-4">
           <label
             htmlFor="username"
@@ -113,6 +122,17 @@ export default function Register() {
         >
           Daftar Sekarang
         </button>
+
+        <p className="mt-4 text-center text-sm font-medium text-gray-600">
+          Sudah punya akun?{" "}
+          <button
+            type="button"
+            onClick={() => navigate("/login")}
+            className="font-bold text-black underline underline-offset-4 outline-none hover:text-gray-700"
+          >
+            Masuk
+          </button>
+        </p>
       </form>
     </div>
   );

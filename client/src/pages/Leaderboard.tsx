@@ -1,36 +1,38 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useUserStore } from "../store/useUserStore";
+import { io, Socket } from "socket.io-client";
 import flashIcon from "../assets/leaderboard/flash.svg";
 import starIcon from "../assets/leaderboard/star.svg";
 
-const dummy = [
-  { name: "Budi", streak: 38, score: 3200, avatar: "B" },
-  { name: "Aisyah", streak: 42, score: 3100, avatar: "A" },
-  { name: "Citra", streak: 35, score: 2900, avatar: "C" },
-  { name: "Dian", streak: 30, score: 2600, avatar: "D" },
-  { name: "Eko", streak: 27, score: 2400, avatar: "E" },
-  { name: "Fatimah", streak: 22, score: 2200, avatar: "F" },
-  { name: "Gilang", streak: 18, score: 2000, avatar: "G" },
-  { name: "Hana", streak: 15, score: 1800, avatar: "H" },
-  { name: "Irfan", streak: 12, score: 1600, avatar: "I" },
-  { name: "Joko", streak: 9, score: 1400, avatar: "J" },
-].sort((a, b) => b.score - a.score);
+interface LeaderboardUser {
+  id: number;
+  name: string;
+  username: string;
+  score: number;
+  streak: number;
+  avatar?: string;
+}
 
 export default function Leaderboard() {
-  const name = useUserStore((state) => state.name);
-  const username = useUserStore((state) => state.username);
-  const streak = useUserStore((state) => state.streak);
-  const score = useUserStore((state) => state.score);
-  const displayName = name || username || "Kamu";
-  const data = [
-    ...dummy,
-    {
-      name: displayName,
-      streak,
-      score,
-      avatar: displayName.slice(0, 1).toUpperCase(),
-    },
-  ].sort((a, b) => b.score - a.score);
+  const [data, setData] = useState<LeaderboardUser[]>([]);
+
+  useEffect(() => {
+    const socket: Socket = io("http://localhost:3001", {
+      withCredentials: true,
+    });
+
+    socket.on("leaderboardUpdate", (users: LeaderboardUser[]) => {
+      const parsedUsers = users.map((u) => ({
+        ...u,
+        avatar: (u.name || u.username || "?").slice(0, 1).toUpperCase(),
+      }));
+      setData(parsedUsers);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   const topThree = data.slice(0, 3);
   const others = data.slice(3);
@@ -67,7 +69,7 @@ export default function Leaderboard() {
 
             return (
               <motion.div
-                key={user.name}
+                key={user.id || user.username}
                 layout
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 className="text-center"
@@ -77,7 +79,7 @@ export default function Leaderboard() {
                     {user.avatar}
                   </div>
                   <p className="mt-2 text-sm font-bold leading-tight">
-                    {user.name}
+                    {user.name || user.username}
                   </p>
                   <span className="mt-1 inline-flex items-center gap-1 rounded-full border-2 border-black bg-white px-2.5 py-1 text-[11px] font-semibold text-orange-500">
                     <img src={flashIcon} alt="" className="h-3.5 w-3.5" />
@@ -123,7 +125,7 @@ export default function Leaderboard() {
 
             return (
               <motion.div
-                key={u.name}
+                key={u.id || u.username}
                 layout
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 className="flex items-center gap-3 rounded-2xl border-2 border-black bg-white px-3 py-3"
@@ -135,7 +137,9 @@ export default function Leaderboard() {
                   {u.avatar}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-base font-bold">{u.name}</p>
+                  <p className="truncate text-base font-bold">
+                    {u.name || u.username}
+                  </p>
                   <p className="flex items-center gap-0.5 text-xs font-medium text-orange-600">
                     <img src={flashIcon} alt="" className="h-3.5 w-3.5" />
                     {u.streak} hari beruntun

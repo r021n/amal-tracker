@@ -1,6 +1,9 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import { createServer } from "http";
+import { Server as SocketIOServer } from "socket.io";
+import { initCronJobs } from "./utils/cron.js";
 
 // Import routes
 import authRoutes from "./routes/auth.routes.js";
@@ -70,7 +73,18 @@ app.use(
 
 // ─── Start Server ────────────────────────────────────────────────────────────
 
-app.listen(PORT, () => {
+const httpServer = createServer(app);
+const io = new SocketIOServer(httpServer, {
+  cors: {
+    origin: CORS_ORIGIN,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  },
+});
+
+initCronJobs(io);
+
+httpServer.listen(PORT, () => {
   console.log(`\n🕌 Amal Tracker API running on http://localhost:${PORT}`);
   console.log(`   CORS origin: ${CORS_ORIGIN}`);
   console.log(`   Health check: http://localhost:${PORT}/api/health\n`);

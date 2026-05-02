@@ -4,6 +4,7 @@ import cors from "cors";
 import { createServer } from "http";
 import { Server as SocketIOServer } from "socket.io";
 import { initCronJobs } from "./utils/cron.js";
+import { loggerMiddleware } from "./middleware/logger.middleware.js";
 
 // Import routes
 import authRoutes from "./routes/auth.routes.js";
@@ -20,6 +21,7 @@ const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:5173";
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
 
+app.use(loggerMiddleware);
 app.use(
   cors({
     origin: CORS_ORIGIN,

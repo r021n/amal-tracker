@@ -13,9 +13,6 @@ import { ClockIcon } from "../assets/home/ClockIcon";
 import { ChevronIcon } from "../assets/home/ChevronIcon";
 import { CircularProgress } from "../assets/home/CircularProgress";
 
-
-
-
 type SholatKey = "s" | "d" | "a" | "m" | "i";
 
 export default function Home() {
@@ -246,7 +243,7 @@ export default function Home() {
           <div className="relative z-10">
             <div className="flex items-start justify-between">
               <div className="rounded-xl border-2 border-black bg-white p-2.5">
-                <img src={walletIcon} alt="" className="h-[22px] w-[22px]" />
+                <img src={walletIcon} alt="" className="h-5.5 w-5.5" />
               </div>
               <div className="rounded-full border-2 border-black bg-white/90 px-2 py-0.5 text-[11px] font-black">
                 {Math.round(sedekahPercent)}%
@@ -283,7 +280,7 @@ export default function Home() {
           <div className="relative z-10">
             <div className="flex items-start justify-between">
               <div className="rounded-xl border-2 border-black bg-white p-2.5">
-                <img src={bookIcon} alt="" className="h-[22px] w-[22px]" />
+                <img src={bookIcon} alt="" className="h-5.5 w-5.5" />
               </div>
               <div className="rounded-full border-2 border-black bg-white/90 px-2 py-0.5 text-[11px] font-black">
                 {Math.round(quranPercent)}%

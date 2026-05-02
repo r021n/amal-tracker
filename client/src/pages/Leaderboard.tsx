@@ -15,6 +15,7 @@ interface LeaderboardUser {
 
 export default function Leaderboard() {
   const [data, setData] = useState<LeaderboardUser[]>([]);
+  const [timeLeft, setTimeLeft] = useState("");
 
   useEffect(() => {
     const socket: Socket = io("http://localhost:3001", {
@@ -29,8 +30,26 @@ export default function Leaderboard() {
       setData(parsedUsers);
     });
 
+    const calculateTimeLeft = () => {
+      const now = Date.now();
+      const interval = 5 * 60 * 1000;
+      const nextUpdate = Math.ceil(now / interval) * interval;
+      const diff = nextUpdate - now;
+
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+    };
+
+    setTimeLeft(calculateTimeLeft());
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+
     return () => {
       socket.disconnect();
+      clearInterval(timer);
     };
   }, []);
 
@@ -52,10 +71,20 @@ export default function Leaderboard() {
   return (
     <div className="mx-auto max-w-md space-y-5 p-4 pb-24">
       <div className="px-5 py-5">
-        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gray-500">
-          Papan Peringkat
-        </p>
-        <h1 className="mt-2 text-3xl font-black leading-none">Amal Terbaik</h1>
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gray-500">
+              Papan Peringkat
+            </p>
+            <h1 className="mt-2 text-3xl font-black leading-none">
+              Amal Terbaik
+            </h1>
+          </div>
+          <div className="flex items-center gap-1.5 rounded-full border-2 border-black bg-white px-3 py-1.5 text-[10px] font-black uppercase tracking-wider">
+            <div className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
+            Update: {timeLeft}
+          </div>
+        </div>
         <p className="mt-2 text-sm text-gray-600">
           Lihat siapa yang memiliki skor tertinggi dan amalan paling konsisten.
         </p>

@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "motion/react";
 
 import CircleStatus from "./CircleStatus";
 
-type CustomItem = { id: string; name: string; done: boolean };
+type CustomItem = { id: string | number; name: string; done: boolean };
 
 type CustomSectionProps = {
   expanded: boolean;
@@ -11,8 +11,8 @@ type CustomSectionProps = {
   customName: string;
   onCustomNameChange: (value: string) => void;
   onAddCustom: () => void;
-  onToggleCustom: (id: string) => void;
-  onRemoveCustom: (id: string) => void;
+  onToggleCustom: (id: string | number) => void;
+  onRemoveCustom: (id: string | number) => void;
 };
 
 export default function CustomSection({
